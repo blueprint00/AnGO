@@ -54,9 +54,10 @@ public class MainActivity extends AppCompatActivity {
                     Item it = itemss.get(i);
 
                     pob.add(new PlayObject(it.addr1, it.addr2, it.areacode, it.cat1, it.cat2, it.cat3,
-                                            it.contentid, it.contenttypeid, it.createdtime, it.dist,
-                                            it.firstimage2, it.title));
-
+                            it.contentid, it.contenttypeid, it.createdtime, it.dist,
+                            it.firstimage2, it.title));
+                }
+                for(int i = 0; i < pob.size(); i ++);
                     System.out.println("daily : {" +
                             "\nAddr1 : " + pob.get(i).getAddr1() +
                             "\nAddr2 : " + pob.get(i).getAddr2() +

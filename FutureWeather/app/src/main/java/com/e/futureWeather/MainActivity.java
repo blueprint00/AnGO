@@ -21,9 +21,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
-        new HttpAsyncTask().execute("https://api.darksky.net/forecast/2d32bcfe938dc43f9f32db76ebf8c449/37.6,127,2019-10-30T20:00:00?exclude=currently,flags");
+        String latitude = "37.6";
+        String longitude = "127";
+        String date = "2019-11-02";
+        String time = "20:00:00";
+        new HttpAsyncTask().execute("https://api.darksky.net/forecast/2d32bcfe938dc43f9f32db76ebf8c449/" + latitude + "," + longitude + "?" + date + "T" + time + "?exclude=currently,flags");
     }
 
     private static class HttpAsyncTask extends AsyncTask<String, Void, String > {
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         "\nsummary : " + fob.get(0).getSummaryD() +
                         "\nicon : " + fob.get(0).getIconD() +
                         "\ntemperatureMax : " + fob.get(0).getTemperatureMaxD() +
-                        "\ntemperatureMin : " + fob.get(0).getTemperatureMinD() + "}\n\n");
+                        "\ntemperatureMin : " + fob.get(0).getTemperatureMinD() + "\n}\n");
 
                 //Log.d("Json Parsing", parsingResult);
                 //Log.d(TAG, "doInBackground: " + weathers.toString());
