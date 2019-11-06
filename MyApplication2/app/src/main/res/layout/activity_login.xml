@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/angoLogo"
+        android:layout_width="245dp"
+        android:layout_height="297dp"
+        android:layout_marginTop="44dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/untitled3" />
+
+    <EditText
+        android:id="@+id/userPW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="비밀번호 입력"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/userID"
+        app:layout_constraintTop_toBottomOf="@+id/userID" />
+
+    <EditText
+        android:id="@+id/userID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="215dp"
+        android:hint="아이디 입력                         "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/loginBT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="53dp"
+        android:layout_marginLeft="53dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="42dp"
+        android:onClick="loginClick"
+        android:text="로그인"
+        app:layout_constraintBottom_toBottomOf="@+id/userPW"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/userID" />
+
+    <TextView
+        android:id="@+id/signupBT"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:onClick="signupClick"
+        android:text="회원가입"
+        app:layout_constraintEnd_toEndOf="@+id/loginBT"
+        app:layout_constraintStart_toStartOf="@+id/loginBT"
+        app:layout_constraintTop_toBottomOf="@+id/loginBT" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
