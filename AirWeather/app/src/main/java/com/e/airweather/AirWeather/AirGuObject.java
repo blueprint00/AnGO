@@ -4,26 +4,20 @@ public class AirGuObject {
 
     String sidoName; //서울
     String cityName; //구
+    String cityNameEng;
     String dataTime; //정시측정시간
     double pm10Value; //미세먼지
-    double pm25Value; //초미세먼지
-    AirGuObject airGuObject;
-    //String pm10condition;
-    //String pm25condition;
 
     public AirGuObject() {
 
     }
 
-    public AirGuObject(String cityName, String sidoName, String dataTime, double pm10Value, double pm25Value) {
+    public AirGuObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value) {
         this.sidoName = sidoName;
         this.cityName = cityName;
+        this.cityNameEng = cityNameEng;
         this.dataTime = dataTime;
         this.pm10Value = pm10Value;
-        this.pm25Value = pm25Value;
-    }
-    public AirGuObject getAirGuObject(){
-        return airGuObject;
     }
 
     public String getSidoName() {
@@ -42,6 +36,14 @@ public class AirGuObject {
         this.cityName = cityName;
     }
 
+    public String getCityNameEng() {
+        return cityNameEng;
+    }
+
+    public void setCityNameEng(String cityNameEng) {
+        this.cityNameEng = cityNameEng;
+    }
+
     public String getDataTime() {
         return dataTime;
     }
@@ -58,27 +60,4 @@ public class AirGuObject {
         this.pm10Value = pm10Value;
     }
 
-    public double getPm25Value() {
-        return pm25Value;
-    }
-
-    public void setPm25Value(double pm25Value) {
-        this.pm25Value = pm25Value;
-    }
-
-    /*public String getPm10condition() {
-        return pm10condition;
-    }
-
-    public void setPm10condition(String pm10condition) {
-        this.pm10condition = pm10condition;
-    }
-
-    public String getPm25condition() {
-        return pm25condition;
-    }
-
-    public void setPm25condition(String pm25condition) {
-        this.pm25condition = pm25condition;
-    }*/
 }

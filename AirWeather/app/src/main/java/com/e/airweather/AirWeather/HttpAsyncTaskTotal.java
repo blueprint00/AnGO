@@ -33,8 +33,12 @@ public class HttpAsyncTaskTotal extends AsyncTask<Void, Void, String> {
             Response responseA = client.newCall(requestA).execute();
             Response responseW = client.newCall(requestW).execute();
 
+            AirGuVO airGuVO = new AirGuVO();
             Gson gson = new Gson();
-            AirGuVO airGuVO = gson.fromJson(responseA.body().string(), AirGuVO.class);
+            //if(gson != null) {
+                airGuVO = gson.fromJson(responseA.body().string(), AirGuVO.class);
+                
+            //}
             CurWeatherVO curWeatherVO = gson.fromJson(responseW.body().string(), CurWeatherVO.class);
 
             ArrayList<List> lists = airGuVO.list;
@@ -48,7 +52,7 @@ public class HttpAsyncTaskTotal extends AsyncTask<Void, Void, String> {
                 if(l.cityName.equals(cityname)){
                     System.out.println(l.cityName);
                     airWeatherObject = new AirWeatherObject(
-                            l.sidoName, l.cityName, l.dataTime, l.pm10Value,
+                            l.sidoName, l.cityName, l.cityNameEng, l.dataTime, l.pm10Value,
                             c.time, c.summary, c.icon, c.temperature, c.humidity
                     );
                 }
@@ -59,6 +63,8 @@ public class HttpAsyncTaskTotal extends AsyncTask<Void, Void, String> {
 
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e){
             e.printStackTrace();
         }
         return result;

@@ -20,14 +20,10 @@ public class Type {
 
     public String WeatherType() {
         try {
-            System.out.println("1");
-            System.out.println(airWeatherObject.getCityName());
-            if (80 < this.airWeatherObject.getPm10Value() && this.airWeatherObject.getPm10Value() <= 600) {
-                System.out.println(airWeatherObject.getPm10Value());
+            if (80 < this.airWeatherObject.getPm10Value() && this.airWeatherObject.getPm10Value() <= 600)
                 this.weatherType = "type_0";
-            }
+
             else {
-                System.out.println("2");
                 switch (airWeatherObject.getIcon()) {
                     case "snow":
                     case "Snow":

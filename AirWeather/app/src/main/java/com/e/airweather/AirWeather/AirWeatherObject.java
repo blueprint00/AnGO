@@ -3,6 +3,7 @@ package com.e.airweather.AirWeather;
 public class AirWeatherObject {
     String sidoName; //서울
     String cityName; //구
+    String cityNameEng;
     String dataTime; //정시측정시간
     double pm10Value; //미세먼지
 
@@ -12,9 +13,13 @@ public class AirWeatherObject {
     double temperature;
     double humidity;
 
-    public AirWeatherObject(String sidoName, String cityName, String dataTime, double pm10Value, long time, String summary, String icon, double temperature, double humidity){
+    public AirWeatherObject() {
+    }
+
+    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value, long time, String summary, String icon, double temperature, double humidity){
         this.sidoName = sidoName;
         this.cityName = cityName;
+        this.cityNameEng = cityNameEng;
         this.dataTime = dataTime;
         this.pm10Value = pm10Value;
         this.time = time;
@@ -23,9 +28,10 @@ public class AirWeatherObject {
         this.temperature = temperature;
         this.humidity = humidity;
     }
-    public AirWeatherObject(String sidoName, String cityName, String dataTime, double pm10Value) {
+    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value) {
         this.sidoName = sidoName;
         this.cityName = cityName;
+        this.cityNameEng = cityNameEng;
         this.dataTime = dataTime;
         this.pm10Value = pm10Value;
     }
@@ -36,10 +42,6 @@ public class AirWeatherObject {
         this.icon = icon;
         this.temperature = temperature;
         this.humidity = humidity;
-    }
-
-    public AirWeatherObject() {
-
     }
 
     public String getSidoName() {
@@ -56,6 +58,14 @@ public class AirWeatherObject {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public String getCityNameEng() {
+        return cityNameEng;
+    }
+
+    public void setCityNameEng(String cityNameEng) {
+        this.cityNameEng = cityNameEng;
     }
 
     public String getDataTime() {
