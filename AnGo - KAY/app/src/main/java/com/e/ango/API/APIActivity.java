@@ -12,7 +12,7 @@ import com.e.ango.R;
 
 public class APIActivity extends AppCompatActivity {
 
-    public static String ip = "192.168.112.35";//"172.16.15.152"; //자신의 IP번호
+    public static String ip = "172.16.15.152"; //자신의 IP번호
     String serverip = "http://" + ip + ":8080/ango/Dispacher"; // 연결할 jsp주소
 
     Button button1, button2, button3, buttonS1, buttonS2, buttonS3, buttonType, change;

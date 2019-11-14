@@ -5,7 +5,7 @@ import com.e.ango.API.Weather.CurWeatherObject;
 
 import java.util.ArrayList;
 
-public class AirWeatherVO{
+public class AirWeatherDto{
 
     ArrayList<AirGuObject> airGuObject;
     CurWeatherObject curWeatherObject;

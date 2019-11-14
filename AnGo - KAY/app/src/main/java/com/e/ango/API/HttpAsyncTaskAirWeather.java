@@ -23,7 +23,7 @@ public class HttpAsyncTaskAirWeather extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... voids) {
         String result = null;
-        String urlA = "https://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnMesureSidoLIst?sidoName=%EC%84%9C%EC%9A%B8&searchCondition=DAILY&pageNo=1&numOfRows=25&ServiceKey=w%2BvIOXxlMW05eJcl2Fw894grerR3LUGL1LepRRDEjPN1ntgk2i2%2FV00sSzbn7QZAnF5iqz2WG%2BiDxWnf2tdy4A%3D%3D&_returnType=json";
+        String urlA = "http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnMesureSidoLIst?sidoName=%EC%84%9C%EC%9A%B8&searchCondition=DAILY&pageNo=1&numOfRows=25&ServiceKey=w%2BvIOXxlMW05eJcl2Fw894grerR3LUGL1LepRRDEjPN1ntgk2i2%2FV00sSzbn7QZAnF5iqz2WG%2BiDxWnf2tdy4A%3D%3D&_returnType=json";
         String urlW = "https://api.darksky.net/forecast/2d32bcfe938dc43f9f32db76ebf8c449/37.6,127?exclude=hourly,daily";
 
         try {
@@ -31,16 +31,15 @@ public class HttpAsyncTaskAirWeather extends AsyncTask<Void, Void, String> {
                             .url(urlA)
                             .build();
             Request requestW = new Request.Builder()
-                .url(urlW)
-                .build();
+                        .url(urlW)
+                        .build();
 
-            Response responseA = client.newCall(requestA).execute();
-            Response responseW = client.newCall(requestW).execute();
+            okhttp3.Response responseA = client.newCall(requestA).execute();
+            okhttp3.Response responseW = client.newCall(requestW).execute();
 
             AirDto airDto = new AirDto();
             Gson gson = new Gson();
             airDto = gson.fromJson(responseA.body().string(), AirDto.class);
-
             CurWeatherDto curWeatherDto = gson.fromJson(responseW.body().string(), CurWeatherDto.class);
 
             ArrayList<List> lists = airDto.list;

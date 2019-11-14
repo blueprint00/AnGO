@@ -5,5 +5,5 @@ public class List {
     public String cityName;
     public String cityNameEng;
     public String dataTime;
-    public double pm10Value;
+    public String pm10Value;
 }

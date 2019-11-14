@@ -22,7 +22,8 @@ public class Type {
 
     public String WeatherType() {
         try {
-            if (80 < airWeatherObject.getPm10Value() && airWeatherObject.getPm10Value() <= 600) {
+            Integer pm10Value = Integer.parseInt(airWeatherObject.getPm10Value());
+            if (80 < pm10Value  && pm10Value <= 600) {
                 weatherType = "type_0";
             } else {
                 switch (airWeatherObject.getIcon()) {

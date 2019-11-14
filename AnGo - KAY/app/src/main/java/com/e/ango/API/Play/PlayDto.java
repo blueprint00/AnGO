@@ -1,5 +1,5 @@
 package com.e.ango.API.Play;
 
-public class PlayVO {
+public class PlayDto {
     public Response response;
 }

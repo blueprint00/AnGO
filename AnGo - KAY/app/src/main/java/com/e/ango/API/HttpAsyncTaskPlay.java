@@ -2,11 +2,10 @@ package com.e.ango.API;
 
 import android.os.AsyncTask;
 
-import com.e.ango.API.APIActivity;
 import com.e.ango.API.Play.Item;
 import com.e.ango.API.Play.Items;
 import com.e.ango.API.Play.PlayObject;
-import com.e.ango.API.Play.PlayVO;
+import com.e.ango.API.Play.PlayDto;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -27,24 +26,23 @@ public class HttpAsyncTaskPlay extends AsyncTask<Void, Void, String > {
         String result = null;
         //String strUrl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=VvSYrDrc4pOEEbTc61UkhlbLjj9a1JCbxq3dRy24%2BRftOs9iNCGlQ%2F5W%2FkKBsW4PA6mBS%2BQ20fBc%2BjQWV7rabg%3D%3D&" +
         //        "mapX= " + mapX + "&" + "mapY=" + mapY + "&radius=2000&&arrange=E&MobileOS=AND&MobileApp=AppTest&numOfRows=100&_type=json";
-        String url = "https://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=VvSYrDrc4pOEEbTc61UkhlbLjj9a1JCbxq3dRy24%2BRftOs9iNCGlQ%2F5W%2FkKBsW4PA6mBS%2BQ20fBc%2BjQWV7rabg%3D%3D&mapX=126.981611&mapY=37.568477&radius=2000&&arrange=E&MobileOS=AND&MobileApp=AppTest&numOfRows=100&_type=json";
+        String url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=VvSYrDrc4pOEEbTc61UkhlbLjj9a1JCbxq3dRy24%2BRftOs9iNCGlQ%2F5W%2FkKBsW4PA6mBS%2BQ20fBc%2BjQWV7rabg%3D%3D&mapX=126.981611&mapY=37.568477&radius=2000&&arrange=E&MobileOS=AND&MobileApp=AppTest&numOfRows=100&_type=json";
 
         try {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
 
-            Response response = client.newCall(request).execute();
+            okhttp3.Response response = client.newCall(request).execute();
 
             Gson gson = new Gson();
-            PlayVO playVO = gson.fromJson(response.body().string(), PlayVO.class);
+            PlayDto playDto = gson.fromJson(response.body().string(), PlayDto.class);
             ArrayList<PlayObject> pob = new ArrayList<>();
 
-            com.e.ango.API.Play.Response response1 = playVO.response;
+            com.e.ango.API.Play.Response response1 = playDto.response;
             com.e.ango.API.Play.Body body = response1.body;
             Items items = body.items;
             ArrayList<Item> itemss = items.item;
-
 
             for (int i = 0; i < itemss.size(); i++) {
                 Item it = itemss.get(i);

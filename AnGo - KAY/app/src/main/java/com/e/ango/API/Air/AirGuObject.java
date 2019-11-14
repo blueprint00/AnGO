@@ -6,13 +6,13 @@ public class AirGuObject {
     String cityName; //구
     String cityNameEng;
     String dataTime; //정시측정시간
-    double pm10Value; //미세먼지
+    String pm10Value; //미세먼지
 
     public AirGuObject() {
 
     }
 
-    public AirGuObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value) {
+    public AirGuObject(String sidoName, String cityName, String cityNameEng, String dataTime, String pm10Value) {
         this.sidoName = sidoName;
         this.cityName = cityName;
         this.cityNameEng = cityNameEng;
@@ -52,11 +52,11 @@ public class AirGuObject {
         this.dataTime = dataTime;
     }
 
-    public double getPm10Value() {
+    public String getPm10Value() {
         return pm10Value;
     }
 
-    public void setPm10Value(double pm10Value) {
+    public void setPm10Value(String pm10Value) {
         this.pm10Value = pm10Value;
     }
 

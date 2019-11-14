@@ -5,7 +5,7 @@ public class AirWeatherObject {
     String cityName; //구
     String cityNameEng;
     String dataTime; //정시측정시간
-    double pm10Value; //미세먼지
+    String pm10Value; //미세먼지
 
     long time;
     String summary;
@@ -16,7 +16,7 @@ public class AirWeatherObject {
     public AirWeatherObject() {
     }
 
-    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value, long time, String summary, String icon, double temperature, double humidity){
+    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, String pm10Value, long time, String summary, String icon, double temperature, double humidity){
         this.sidoName = sidoName;
         this.cityName = cityName;
         this.cityNameEng = cityNameEng;
@@ -28,7 +28,7 @@ public class AirWeatherObject {
         this.temperature = temperature;
         this.humidity = humidity;
     }
-    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value) {
+    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, String pm10Value) {
         this.sidoName = sidoName;
         this.cityName = cityName;
         this.cityNameEng = cityNameEng;
@@ -76,11 +76,11 @@ public class AirWeatherObject {
         this.dataTime = dataTime;
     }
 
-    public double getPm10Value() {
+    public String getPm10Value() {
         return pm10Value;
     }
 
-    public void setPm10Value(double pm10Value) {
+    public void setPm10Value(String pm10Value) {
         this.pm10Value = pm10Value;
     }
 
