@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchAreaActivity">
+
+   <Spinner
+       android:id="@+id/spinner_districtName"
+       android:layout_width="150dp"
+       android:layout_height="40dp"
+       android:entries="@array/districtName">
+   </Spinner>
+
+   <TextView
+       android:id="@+id/textView_districtResult"
+       android:layout_width="150dp"
+       android:layout_height="30dp"
+       android:text="지역 설정 결과"
+       android:layout_marginTop="15dp"
+       android:textSize="20dp"
+       android:layout_below="@+id/spinner_districtName"/>
+   <TextView
+       android:id="@+id/textView_selectDate"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_toRightOf="@+id/spinner_districtName"
+       android:text="날짜 선택"
+       android:textSize="25dp"
+       android:layout_marginTop="10dp"/>
+
+   <TextView
+       android:id="@+id/textView_selectTime"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_margin="10dp"
+       android:layout_toRightOf="@+id/textView_selectDate"
+       android:text="시간 선택"
+       android:textSize="25dp" />
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="588dp"
+       android:layout_below="@+id/textView_districtResult"
+       android:layout_marginTop="59dp">
+
+      <TextView
+          android:id="@+id/textView_weatherParsedData"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:hint="Weather Parsed Data Here"
+          android:padding="5dp"
+          android:textSize="24sp" />
+   </ScrollView>
+
+   <Button
+       android:id="@+id/button_search"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="10dp"
+       android:layout_below="@+id/textView_districtResult"
+       android:text="Search" />
+</RelativeLayout>
