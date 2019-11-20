@@ -23,7 +23,7 @@ import static com.example.weathersearch.SearchAreaActivity.yCoordinate;
 public class SearchWeatherTask extends AsyncTask<Void, Void, String> {
     OkHttpClient client = new OkHttpClient();
     String parsingResult = null;
-    String data = "";
+    String weatherType = "";
 
     @Override
     protected String doInBackground(Void... params) {
@@ -55,10 +55,11 @@ public class SearchWeatherTask extends AsyncTask<Void, Void, String> {
             searchAirWeatherObject.faherenheitToCelcius();
 
             Type type = new Type(searchAirWeatherObject);
-            System.out.println(type.WeatherType());
+            weatherType = type.WeatherType();
+            System.out.println(weatherType);
 
             parsingResult = "SearchWeatherTask\n";
-            parsingResult = parsingResult + type.WeatherType() + "\n";
+            parsingResult = parsingResult + weatherType + "\n";
             parsingResult = parsingResult + searchAirWeatherObject.airCityName + "\n";
             parsingResult = parsingResult + "hourly time : " + currentlyTime + "\n" +
                     "hourly weather summary : " + searchAirWeatherObject.getCurrentlyIcon() + "\n" +
@@ -78,7 +79,7 @@ public class SearchWeatherTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
 
-        return null;
+        return weatherType;
     }
 
     @Override

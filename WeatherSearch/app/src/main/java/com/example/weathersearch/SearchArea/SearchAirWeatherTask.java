@@ -26,7 +26,7 @@ import static com.example.weathersearch.SearchAreaActivity.yCoordinate;
 public class SearchAirWeatherTask extends AsyncTask<Void, Void, String> {
     OkHttpClient client = new OkHttpClient();
     String parsingResult = null;
-    String data = "";
+    String weatherType = "";
 
     @Override
     protected String doInBackground(Void... voids) {
@@ -80,8 +80,10 @@ public class SearchAirWeatherTask extends AsyncTask<Void, Void, String> {
             searchAirWeatherObject.faherenheitToCelcius();
 
             Type type = new Type(searchAirWeatherObject);
-            System.out.println(type.WeatherType());
-            parsingResult =  type.WeatherType() + "\n";
+            weatherType = type.WeatherType();
+            System.out.println(weatherType);
+
+            parsingResult =  weatherType + "\n";
             parsingResult = parsingResult + "airweatherparsing" + "\n";
             parsingResult = parsingResult + searchAirWeatherObject.airCityName + "\n";
             parsingResult = parsingResult + "hourly time : " + currentlyTime + "\n" +
@@ -104,7 +106,7 @@ public class SearchAirWeatherTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
 
-        return null;
+        return weatherType;
     }
 
     @Override

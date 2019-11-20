@@ -19,20 +19,24 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import static com.example.weathersearch.SearchAreaActivity.xCoordinate;
+import static com.example.weathersearch.SearchAreaActivity.yCoordinate;
 
-public class SearchPlayTask extends AsyncTask<Void, Void, String > {
+public class HttpAsyncTaskPlay extends AsyncTask<Void, Void, String > {
     OkHttpClient client = new OkHttpClient();
     String singleparsed = "", dataParsed = "";
 
-    Double longitude = 126.964954;// SearchAreaActivity.location.getLongitude();
-    Double latitude = 37.595386;//SearchAreaActivity.location.getLatitude();
-
+//    Double latitude = 37.595386;//SearchAreaActivity.location.getLatitude();
+//    Double longitude = 126.964954;// SearchAreaActivity.location.getLongitude();
+    Double latitude = Double.parseDouble(xCoordinate);
+    Double longitude = Double.parseDouble(yCoordinate);
     public static ArrayList<PlayObject> pob = new ArrayList<>();
 
     @Override
     protected String doInBackground(Void... voids) {
         String result = null;
-        String url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=VvSYrDrc4pOEEbTc61UkhlbLjj9a1JCbxq3dRy24%2BRftOs9iNCGlQ%2F5W%2FkKBsW4PA6mBS%2BQ20fBc%2BjQWV7rabg%3D%3D&" + "mapX= " + longitude + "&mapY=" + latitude + "&radius=2000&&arrange=E&MobileOS=AND&MobileApp=AppTest&numOfRows=100&_type=json";
+        String url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=VvSYrDrc4pOEEbTc61UkhlbLjj9a1JCbxq3dRy24%2BRftOs9iNCGlQ%2F5W%2FkKBsW4PA6mBS%2BQ20fBc%2BjQWV7rabg%3D%3D&"
+                + "mapX= " + latitude + "&mapY=" + longitude + "&radius=2000&&arrange=E&MobileOS=AND&MobileApp=AppTest&numOfRows=100&_type=json";
         //String url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?ServiceKey=VvSYrDrc4pOEEbTc61UkhlbLjj9a1JCbxq3dRy24%2BRftOs9iNCGlQ%2F5W%2FkKBsW4PA6mBS%2BQ20fBc%2BjQWV7rabg%3D%3D&mapX=126.981611&mapY=37.568477&radius=2000&&arrange=E&MobileOS=AND&MobileApp=AppTest&numOfRows=100&_type=json";
 
         try {

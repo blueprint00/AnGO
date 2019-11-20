@@ -14,14 +14,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.weathersearch.ListView.ListAdapter;
+import com.example.weathersearch.ListView.ListData;
+import com.example.weathersearch.Recommend.RecommendTask;
+import com.example.weathersearch.SearchArea.PlayObject;
 import com.example.weathersearch.SearchArea.SearchAirWeatherTask;
 import com.example.weathersearch.SearchArea.SearchWeatherTask;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 public class SearchAreaActivity extends AppCompatActivity {
     public static String date;//날짜 받아온 결과
@@ -42,6 +49,10 @@ public class SearchAreaActivity extends AppCompatActivity {
     int inputMonth;//사용자가 지정한 월
     int inputDay;//사용자가 지정한 일
 
+    ArrayList<PlayObject> playObjects = new ArrayList<>();
+    String weatherType = "";
+    public static ListView printList = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +64,7 @@ public class SearchAreaActivity extends AppCompatActivity {
         final String[] districToYcoordinate = getResources().getStringArray(R.array.districtYcoordinate);
 
 
-        //날짜(년,월,일) + 시간(시,분,초)
+        //날짜(년,월,일) + 시간(시,분)
         textView_selectDate = findViewById(R.id.textView_selectDate);
         textView_selectTime = findViewById(R.id.textView_selectTime);
         Calendar calendar =  Calendar.getInstance();
@@ -62,17 +73,15 @@ public class SearchAreaActivity extends AppCompatActivity {
         final int day = calendar.get(Calendar.DAY_OF_MONTH);
         final int hour = calendar.get(Calendar.HOUR);
         final int minute = calendar.get(Calendar.MINUTE);
-        //final int second = calendar.get(Calendar.SECOND);
 
 
         //spinner 선언 //(지역 설정 드롭박스)
         spinner_District = findViewById(R.id.spinner_districtName);
-        textView_districtResult = findViewById(R.id.textView_districtResult);
+
 
         spinner_District.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                textView_districtResult.setText(parent.getItemAtPosition(position).toString());
                 districtResult = parent.getItemAtPosition(position).toString();//사용자가 지정한 지역의 지역명
                 xCoordinate = districToXcoordinate[position];//사용자가 지정한 지역의 x좌표
                 yCoordinate = districToYcoordinate[position];//사용자가 지정한 지역의 y좌표
@@ -180,12 +189,60 @@ public class SearchAreaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(inputHour == hour && inputDay == day && inputMonth == month && inputYear == year) {//사용자가 현재시각에서 다른 장소를 검색할때
-                    new SearchAirWeatherTask().execute();
-                System.out.println("//////////////////////////////////////////////");//입력 값들이 잘들어갔는지 확인하기 위한 print
+                    try {
+                        weatherType = new SearchAirWeatherTask().execute().get(); // 날씨, 온도, 타입
+                        playObjects = new RecommendTask(weatherType).execute().get(); // 추천
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    int size = 10;//playObjects.size();
+                    int list_cnt = 0;
+                    ArrayList<ListData> arrListData = new ArrayList<>();
+
+                    for(int i = 0; i < size; i ++){
+                        ListData listData = new ListData();
+                        listData.title = i + "!"; //playObjects.get(i).title;
+                        listData.summary = i + "!!"; //playObjects.get(i).addr1 + " " + playObjects.get(i).addr2;
+                        list_cnt ++;
+                        arrListData.add(listData);
+                        if(list_cnt >= size) list_cnt = 0;
+                    }
+                    printList = (ListView) findViewById(R.id.listView);
+                    ListAdapter listAdapter = new ListAdapter(arrListData);
+                    printList.setAdapter(listAdapter);//*/
+
+                    System.out.println("//////////////////////////////////////////////");//입력 값들이 잘들어갔는지 확인하기 위한 print
                 System.out.println(xCoordinate + "," + yCoordinate + "," + date + "T"+ time + "?exclude=hourly,flags");
                 }
                 else {//나머지(다른지역 다른시간, 현재지역 다른시간)
-                    new SearchWeatherTask().execute();
+                    try {
+                        weatherType = new SearchWeatherTask().execute().get(); // 날씨, 온도, 타입
+                        playObjects = new RecommendTask(weatherType).execute().get(); // 추천
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    int size = 10;//playObjects.size();
+                    int list_cnt = 0;
+                    ArrayList<ListData> arrListData = new ArrayList<>();
+
+                    for(int i = 0; i < size; i ++){
+                        ListData listData = new ListData();
+                        listData.title = i + "!"; //playObjects.get(i).title;
+                        listData.summary = i + "!!"; //playObjects.get(i).addr1 + " " + playObjects.get(i).addr2;
+                        list_cnt ++;
+                        arrListData.add(listData);
+                        if(list_cnt >= size) list_cnt = 0;
+                    }
+                    printList = (ListView) findViewById(R.id.listView);
+                    ListAdapter listAdapter = new ListAdapter(arrListData);
+                    printList.setAdapter(listAdapter);//*/
+
                 }
             }
         });
