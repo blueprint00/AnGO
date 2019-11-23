@@ -2,6 +2,10 @@ package com.e.ango.SurveyConnection;
 
 import android.os.AsyncTask;
 
+import com.e.ango.Request.PreferDto;
+import com.e.ango.Request.RequestDto;
+import com.e.ango.Response.ResponseDto;
+
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -15,25 +19,23 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import static com.e.ango.Login.RegisterTask.loginResponse;
-
+import static com.e.ango.Login.LoginTask.token;
 //유저 선호도 점수 전송
 
 public class SurveyUserPreferenceScoreTask extends AsyncTask<Void, Void, Boolean> {
 
-    String url = "http://172.16.10.37"; //서버 (와이파이 바뀔 시 변경)
-
-    private String URL_ADDRESS = url + ":8080/ango/Dispacher";  //주소 변경
-    String request_msg = "InsertUserPreference";
-    String token = loginResponse.token;
+    String url = "172.30.1.24"; //서버 (와이파이 바뀔 시 변경)
+    //http://172.30.1.19:8090/final_ango/Dispacher
+    private String URL_ADDRESS = "http://" + url + ":8090/final_ango/Dispacher2";  //주소 변경
+    private String request_msg = "InsertUserPreference";
     String weather_type;
-    ArrayList<Prefer_List> prefer_lists;
+    ArrayList<PreferDto> preferDtos;
     String str;
     Boolean flag;
 
-    public SurveyUserPreferenceScoreTask(SurveyUserPreferenceScoreDTO surveyUserPreferenceScoreDTO) {
-        this.weather_type = surveyUserPreferenceScoreDTO.weather_type;
-        this.prefer_lists = surveyUserPreferenceScoreDTO.prefer_list;
+    public SurveyUserPreferenceScoreTask(RequestDto requestDto) {
+        this.weather_type = requestDto.getWeather_type();
+        this.preferDtos = requestDto.getPreference_list();
     }
 
     @Override
@@ -41,17 +43,17 @@ public class SurveyUserPreferenceScoreTask extends AsyncTask<Void, Void, Boolean
         try {
             URL Url = new URL(URL_ADDRESS); // URL화 한다.
             HttpURLConnection conn = (HttpURLConnection) Url.openConnection(); // URL을 연결한 객체 생성.
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-SearchAreaWeatherType", "application/x-www-form-urlencoded");
             conn.setRequestMethod("POST"); // get방식 통신
 
 
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
 
-            SurveyUserPreferenceScoreDTO surveyUserPreferenceScoreDTO = new SurveyUserPreferenceScoreDTO(request_msg, token, weather_type
-                                    ,prefer_lists); /////////////////////////////////////////////////// token 처리도 해야함
+            RequestDto requestDto= new RequestDto(request_msg, weather_type, token
+                                    ,preferDtos); /////////////////////////////////////////////////// token 처리도 해야함
             Gson gson = new Gson();
 
-            osw.write(gson.toJson(surveyUserPreferenceScoreDTO));
+            osw.write(gson.toJson(requestDto));
             osw.flush();
 
             if (conn.getResponseCode() == conn.HTTP_OK) {
@@ -62,18 +64,16 @@ public class SurveyUserPreferenceScoreTask extends AsyncTask<Void, Void, Boolean
                     buffer.append(str);
                     System.out.println(str);
                 }
-                System.out.println(buffer);
-                SurveyUserPreferenceScoreResponse surveyUserPreferenceScoreResponse = gson.fromJson(buffer.toString(), SurveyUserPreferenceScoreResponse.class);
-                System.out.println(surveyUserPreferenceScoreResponse);
-                System.out.println(surveyUserPreferenceScoreResponse.response_msg);
+
+                ResponseDto responseDto = gson.fromJson(buffer.toString(), ResponseDto.class);
 
                 //유저 선호도 점수 전송에 성공했을때 flag를 true로 바꾸고 전송
-                if(surveyUserPreferenceScoreResponse.response_msg.equals("InsertUserPreference_success")) {
-                    System.out.println(surveyUserPreferenceScoreResponse.response_msg);
+                if(responseDto.getResponse_msg().equals("InsertUserPreference_success")) {
+                    System.out.println(responseDto.getResponse_msg());
                     flag = true;
                 }
                 else {//유저 선호도 점수 전송에 실패했을때 flag를 true로 바꾸고 전송
-                    System.out.println(surveyUserPreferenceScoreResponse.response_msg);
+                    System.out.println(responseDto.getResponse_msg());
                     flag = false;
                 }
             }

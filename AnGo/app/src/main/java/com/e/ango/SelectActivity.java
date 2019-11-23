@@ -8,9 +8,8 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.e.ango.API.HttpAsyncTaskAir;
-import com.e.ango.API.HttpAsyncTaskAirWeather;
-import com.e.ango.API.HttpAsyncTaskPlay;
+//import com.e.ango.API.HttpAsyncTaskAir;
+
 
 public class SelectActivity extends AppCompatActivity {
 
@@ -27,7 +26,7 @@ public class SelectActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectActivity.this, MainActivity.class);
+                Intent intent = new Intent(SelectActivity.this, CurrentLocationActivity.class);
                 startActivity(intent);
             }
         });
@@ -35,7 +34,7 @@ public class SelectActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectActivity.this, Survey.class);
+                Intent intent = new Intent(SelectActivity.this, SearchAreaActivity.class);
                 startActivity(intent);
             }
         });

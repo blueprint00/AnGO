@@ -28,21 +28,6 @@ public class AirWeatherObject {
         this.temperature = temperature;
         this.humidity = humidity;
     }
-    public AirWeatherObject(String sidoName, String cityName, String cityNameEng, String dataTime, double pm10Value) {
-        this.sidoName = sidoName;
-        this.cityName = cityName;
-        this.cityNameEng = cityNameEng;
-        this.dataTime = dataTime;
-        this.pm10Value = pm10Value;
-    }
-
-    public AirWeatherObject(long time, String summary, String icon, double temperature, double humidity) {
-        this.time = time;
-        this.summary = summary;
-        this.icon = icon;
-        this.temperature = temperature;
-        this.humidity = humidity;
-    }
 
     public String getSidoName() {
         return sidoName;

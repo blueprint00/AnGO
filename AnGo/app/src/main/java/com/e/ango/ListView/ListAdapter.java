@@ -44,9 +44,10 @@ public class ListAdapter extends BaseAdapter {
         if(convertView == null){
             final Context context = parent.getContext();
             if(inflater == null){
-                inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE); // xml파일을 view객체
             }
-            convertView = inflater.inflate(R.layout.listview_item, parent,false);
+            //attachToRoot가 true일경우 생성되는 View가 추가될 부모 뷰, attachToRoot가 false일 경우에는 LayoutParams값을 설정해주기 위한 상위 뷰, null로 설정할경우 android:layout_xxxxx값들이 무시됨.
+            convertView = inflater.inflate(R.layout.listview_item, parent,false); //
         }
 
         TextView textTitle = (TextView) convertView.findViewById(R.id.textTitle);
