@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-//import com.e.ango.R;
-import  com.example.weathersearch.R;
+
+import com.example.weathersearch.R;
 
 import java.util.ArrayList;
 

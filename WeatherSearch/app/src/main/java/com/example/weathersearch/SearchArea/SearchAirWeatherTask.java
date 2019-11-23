@@ -2,12 +2,9 @@ package com.example.weathersearch.SearchArea;
 
 import android.os.AsyncTask;
 
+import com.example.weathersearch.Air.AirDto;
+import com.example.weathersearch.Air.List;
 
-import com.example.weathersearch.SearchArea.AirAPI.AirGuVO;
-import com.example.weathersearch.SearchArea.AirAPI.List;
-import com.example.weathersearch.SearchArea.WeatherAPI.Datum;
-import com.example.weathersearch.SearchArea.WeatherAPI.SearchWeatherJson;
-import com.example.weathersearch.SearchAreaActivity;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -15,27 +12,38 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
-import static com.example.weathersearch.SearchAreaActivity.date;
-import static com.example.weathersearch.SearchAreaActivity.districtResult;
-import static com.example.weathersearch.SearchAreaActivity.time;
-import static com.example.weathersearch.SearchAreaActivity.xCoordinate;
-import static com.example.weathersearch.SearchAreaActivity.yCoordinate;
 
-public class SearchAirWeatherTask extends AsyncTask<Void, Void, String> {
+public class SearchAirWeatherTask extends AsyncTask<Void, Void, SearchAirWeatherObject> {
     OkHttpClient client = new OkHttpClient();
     String parsingResult = null;
     String weatherType = "";
+    SearchAirWeatherObject searchAirWeatherObject;
+    String date;//날짜 받아온 결과
+    String time;//시간 받아온 결과
+    String xCoordinate;
+    String yCoordinate;
+    String districtResult;
+
+    public SearchAirWeatherTask(String date, String time, String xCoordinate, String yCoordinate, String districtResult) {
+        this.date = date;
+        this.time = time;
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
+        this.districtResult = districtResult;
+    }
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected SearchAirWeatherObject doInBackground(Void... voids) {
         String result = null;
         String urlA = "http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnMesureSidoLIst?sidoName=%EC%84%9C%EC%9A%B8&searchCondition=DAILY&pageNo=1&numOfRows=25&ServiceKey=w%2BvIOXxlMW05eJcl2Fw894grerR3LUGL1LepRRDEjPN1ntgk2i2%2FV00sSzbn7QZAnF5iqz2WG%2BiDxWnf2tdy4A%3D%3D&_returnType=json";
         String urlW ="https://api.darksky.net/forecast/2d32bcfe938dc43f9f32db76ebf8c449/"
                 + xCoordinate + "," + yCoordinate + ","
                 + date + "T" + time + "?exclude=hourly,flags";
         try{
+            //clientAir.setConnectTimeout(30, TimeUnit.SECONDS); // connect timeout
+            //clientAir.setReadTimeout(30, TimeUnit.SECONDS);    // socket timeout
+
             Request requestA = new Request.Builder()
                     .url(urlA)
                     .build();
@@ -43,60 +51,65 @@ public class SearchAirWeatherTask extends AsyncTask<Void, Void, String> {
                     .url(urlW)
                     .build();
 
-            Response responseA = client.newCall(requestA).execute();
-            Response responseW = client.newCall(requestW).execute();
+            okhttp3.Response responseA = client.newCall(requestA).execute();
+            okhttp3.Response responseW = client.newCall(requestW).execute();
             Gson gson = new Gson();
 
-            SearchWeatherJson searchWeatherJson = gson.fromJson(responseW.body().string(), SearchWeatherJson.class);
-            ArrayList<Datum> datums = searchWeatherJson.daily.data;
+            SearchWeatherDto searchWeatherDto = gson.fromJson(responseW.body().string(), SearchWeatherDto.class);
+            ArrayList<Datum> datums = searchWeatherDto.daily.data;
             Datum d = datums.get(0);
 
-            SearchAirWeatherObject searchAirWeatherObject = new SearchAirWeatherObject(
+            searchAirWeatherObject = new SearchAirWeatherObject(
                     null, null, null, null, null,null,
-                    searchWeatherJson.currently.time, searchWeatherJson.currently.icon, searchWeatherJson.currently.temperature, searchWeatherJson.currently.humidity,
+                    searchWeatherDto.currently.time, searchWeatherDto.currently.icon, searchWeatherDto.currently.temperature, searchWeatherDto.currently.humidity,
                     d.time, d.icon, d.humidity, d.apparentTemperatureMax, d.apparentTemperatureMin
             );
 
 
-            AirGuVO airGuVO= null;
-            airGuVO = gson.fromJson(responseA.body().string(), AirGuVO.class);
-            ArrayList<com.example.weathersearch.SearchArea.AirAPI.List> lists = airGuVO.list;
+            AirDto airGuVO= null;
+            if (responseA.body() != null)
+                airGuVO = gson.fromJson(responseA.body().string(), AirDto.class);
+            ArrayList<List> lists = airGuVO.list;
 
-            for(int i = 0; i < lists.size(); i ++) {
+            for(int i = 0; i < lists.size(); i ++){
                 List l = lists.get(i);
                 if(l.cityName.equals(districtResult)){
                     System.out.println(l.cityName);
                     searchAirWeatherObject.airCityName = l.cityName;
                     searchAirWeatherObject.aircityNameEng = l.cityNameEng;
-                    searchAirWeatherObject.airPm25Value = l.pm25Value;
                     searchAirWeatherObject.airDataTime = l.dataTime;
                     searchAirWeatherObject.airPm10Value = l.pm10Value;
                     searchAirWeatherObject.airSidoName = l.sidoName;
                 }
             }
 
-            String currentlyTime = searchAirWeatherObject.unixTimeToCurrentlytime();
-            String dailyTime = searchAirWeatherObject.unixTimeToDailytime();
-            searchAirWeatherObject.faherenheitToCelcius();
+            String currentlyTime = searchAirWeatherObject.unixTimeToCurrentlytime();//unix시간을 우리가 쓰는 시간으로 바꾸기
+            String dailyTime = searchAirWeatherObject.unixTimeToDailytime();//unix시간을 우리가 쓰는 시간으로 바꾸기
+            searchAirWeatherObject.faherenheitToCelcius();//화씨 온도를 섭씨 온도로 바꾸기
+            searchAirWeatherObject.humidity();//습도 * 100
 
-            Type type = new Type(searchAirWeatherObject);
+            Type type = new Type(searchAirWeatherObject);//날씨 타입
             weatherType = type.WeatherType();
+            searchAirWeatherObject.setWeatherType(weatherType);//object에 날씨 타입 넣기
             System.out.println(weatherType);
 
-            parsingResult =  weatherType + "\n";
-            parsingResult = parsingResult + "airweatherparsing" + "\n";
-            parsingResult = parsingResult + searchAirWeatherObject.airCityName + "\n";
-            parsingResult = parsingResult + "hourly time : " + currentlyTime + "\n" +
-                    "hourly weather summary : " + searchAirWeatherObject.getCurrentlyIcon() + "\n" +
-                    "hourly temperature : " + searchAirWeatherObject.getCurrentlyTemperature() + "\n" +
-                    "hourly humidity : " + searchAirWeatherObject.getCurrentlyHumidity() + "\n";
-//                  ArrayList<Datum> datums = searchWeatherJson.daily.data;
-//                  Datum d = datums.get(0);
-            parsingResult = parsingResult + "daily time : " + dailyTime + "\n" +
-                    "daily weather summary : " + searchAirWeatherObject.getDailyIcon() + "\n" +
-                    "daily apparentTemperatureMax : " + searchAirWeatherObject.getDailyApparentTemperatureMax() + "\n" +
-                    "daily apparentTemperatureMin : " + searchAirWeatherObject.getDailyApparentTemperatureMin() + "\n" +
-                    "daily humidity : " + searchAirWeatherObject.getDailyHumidity() + "\n";
+//            parsingResult = "airweatherparsing" + "\n";
+//            parsingResult = parsingResult + weatherType + "\n";
+//            parsingResult = parsingResult + searchAirWeatherObject.airCityName + "\n";
+//            parsingResult = parsingResult + "hourly time : " + currentlyTime + "\n" +
+//                    "hourly weather summary : " + searchAirWeatherObject.getCurrentlyIcon() + "\n" +
+//                    "hourly temperature : " + searchAirWeatherObject.getCurrentlyTemperature() + "\n" +
+//                    "hourly humidity : " + searchAirWeatherObject.getCurrentlyHumidity() + "\n";
+////                  ArrayList<Datum> datums = searchWeatherDto.daily.data;
+////                  Datum d = datums.get(0);
+//            parsingResult = parsingResult + "daily time : " + dailyTime + "\n" +
+//                    "daily weather summary : " + searchAirWeatherObject.getDailyIcon() + "\n" +
+//                    "daily apparentTemperatureMax : " + searchAirWeatherObject.getDailyApparentTemperatureMax() + "\n" +
+//                    "daily apparentTemperatureMin : " + searchAirWeatherObject.getDailyApparentTemperatureMin() + "\n" +
+//                    "daily humidity : " + searchAirWeatherObject.getDailyHumidity() + "\n";
+            // 예를 들어 2019년 11월 22일 14:00:00 를 검색했을때
+            //그시각의 날씨(아이콘 : 맑음, 흐림, 비 등등), 그 시각의 온도, 그 시각의 습도,
+            // 그 날 전체를 통틀은 날씨(아이콘 : 맑음, 흐림, 비 등등), 그날의 최고 온도, 그날의 최저 온도, 그날의 습도
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,13 +119,13 @@ public class SearchAirWeatherTask extends AsyncTask<Void, Void, String> {
             e.printStackTrace();
         }
 
-        return weatherType;
+        return searchAirWeatherObject;
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(SearchAirWeatherObject ob) {
+        super.onPostExecute(ob);
 
-        SearchAreaActivity.textView_weatherPasredData.setText(this.parsingResult);
+        //SearchAreaActivity.textView_weatherPasredData.setText(this.parsingResult);
     }
 }
