@@ -1,9 +1,14 @@
 package com.example.weathersearch.Recommend;
 
+import android.drm.DrmStore;
 import android.os.AsyncTask;
 
-import com.example.weathersearch.SearchArea.HttpAsyncTaskPlay;
-import com.example.weathersearch.SearchArea.PlayObject;
+
+import com.example.weathersearch.HttpAsyncTaskPlay;
+import com.example.weathersearch.Play.PlayObject;
+import com.example.weathersearch.Request.PreferDto;
+import com.example.weathersearch.Request.RequestDto;
+import com.example.weathersearch.Response.ResponseDto;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -11,14 +16,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
-//import static com.e.ango.Login.LoginTask.ip;////////////////////////////////////////////////////////////////나중에 합치면 변경
-//import static com.e.ango.Login.RegisterTask.token;//////////////////////////////////////////////////////////나중에 합치면 변경
 
 
 //서버
@@ -28,37 +32,47 @@ import java.util.ArrayList;
 //   "category_name"
 //"total"
 
-public class RecommendTask extends AsyncTask<Void, Void, ArrayList> {
+public class RecommendTask extends AsyncTask<Void, Void, ArrayList<PlayObject>> {
 
     //OkHttpClient client = new OkHttpClient();
-    //public static String ip = "192.168.1.108"; //자신의 IP번호
-    //String serverip = "http://" + ip + ":8080/ango/Dispacher"; // 연결할 jsp주소
+    //public static String ip = "172.16.10.37"; //자신의 IP번호
+    //http://172.30.1.19:8090/final_ango/Dispacher
+    String ip = "172.30.1.24";
+    String serverip = "http://" + ip + ":8090/final_ango/Dispacher2"; // 연결할 jsp주소
+    //public static String token;
+    String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRlIjoxNTc0Mzk2MTMzNDQ5LCJzdWIiOiJ1c2VyX3Rva2VuIiwiYXVkIjoidXNlcklEXzEiLCJpc3MiOiJhbmdvX3NlcnZlciIsImV4cCI6MTU3NDQ4MjUzMzQ0OX0.iuUtw206uL5xi7bct8_Qg8HgOWdIMn_h1mkh1PCW_iY";
 
-    String id = "3";/////////////////////////////////////////////////////////////////////token
-    String url = "http://172.16.10.37"; //서버 (와이파이 바뀔 시 변경)
-    private String URL_ADDRESS = url + ":8080/ango/Dispacher";  //서버 주소
+    String weather_type;
+    ArrayList<PreferDto> preferDtos;
+    RequestDto requestDto;
+    ArrayList<PlayObject> userPreferencePlayObjects = new ArrayList<PlayObject>();
+    ArrayList<PlayObject> originalPlayObjects;
 
-    public ArrayList<PlayObject> playObjects;
-
-    RecommendDto recommendDto;/////////////////////////////////////////  Token 생각하기
-    public RecommendTask(String weather_type){//String request_msg, String weather_type, String token) {
-        recommendDto = new RecommendDto("RecommendCategory", weather_type, id);
+    public RecommendTask(String weather_type, ArrayList<PlayObject> originalPlayObjects){//String request_msg, String weather_type, String token) {
+        this.weather_type = weather_type;
+        this.originalPlayObjects = originalPlayObjects;
     }
 
     @Override
     protected ArrayList<PlayObject> doInBackground(Void... voids) {
         try {
             String str;
-            URL url = new URL(URL_ADDRESS);
+            URL url = new URL(serverip);
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection(); // URL을 연결한 객체 생성.
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestMethod("POST"); // GET??
+            conn.setRequestMethod("POST"); // get방식 통신
+            conn.setDoOutput(true); // 쓰기모드 지정
+            conn.setDoInput(true); // 읽기모드 지정
+            conn.setUseCaches(false); // 캐싱데이터를 받을지 안받을지
+            conn.setDefaultUseCaches(false); // 캐싱데이터 디폴트 값 설정
 
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
 
+
             Gson gson = new Gson();
-            osw.write(gson.toJson(recommendDto));
+            requestDto = new RequestDto("RecommendCategory",weather_type,token);
+            osw.write(gson.toJson(requestDto));
             osw.flush();
 
             if (conn.getResponseCode() == conn.HTTP_OK) {
@@ -69,55 +83,30 @@ public class RecommendTask extends AsyncTask<Void, Void, ArrayList> {
                     buffer.append(str);
                 }
 
-                RecommendResponse recommendResponse = gson.fromJson(buffer.toString(), RecommendResponse.class);
 
-                if (recommendResponse.response_msg.equals("RecommendCategory_success")) {
-                    ArrayList<Category_list> category_lists = recommendResponse.category_list;
-                    playObjects = new ArrayList<PlayObject>();
-                    ArrayList<PlayObject> pob = HttpAsyncTaskPlay.pob;
+                ResponseDto responseDto = gson.fromJson(buffer.toString(), ResponseDto.class);
 
-                    System.out.println(category_lists.size() + "/" + pob.size());
+                if (responseDto.getResponse_msg().equals("RecommendCategory_success")) {
+                    preferDtos = responseDto.getPrefer_list();
 
-                    for (int i = 0; i < category_lists.size(); i++) {
-                        for (int j = 0; j < pob.size(); j++) {
-                            if (category_lists.get(i).category_id.equals(pob.get(j).getCat2())) {
-                                playObjects.add(pob.get(j));
+                    for (int i = 0; i < originalPlayObjects.size(); i++) {
+                        for (int j = 0; j < preferDtos.size(); j ++) {
 
-                                System.out.println("addr1 : " + playObjects.get(i).addr1 +
-                                        "\naddr2 : " + playObjects.get(i).addr2 +
-                                        "\ncat2 : " + playObjects.get(i).cat2 +
-                                        "\ncontentid : " + playObjects.get(i).contentid +
-                                        "\ncontenttypid : " + playObjects.get(i).contenttypeid +
-                                        "\ndist" + playObjects.get(i).dist +
-                                        "\nfirstimage2 : " + playObjects.get(i).firstimage2 +
-                                        "\ntitle : " + playObjects.get(i).title + "\n\n");
+                            if (originalPlayObjects.get(i).getCat2().equals(preferDtos.get(j).getCg_id()) ||
+                                    originalPlayObjects.get(i).getCat3().equals(preferDtos.get(j).getCg_id())) {
+
+                                userPreferencePlayObjects.add(originalPlayObjects.get(i));
+                            }  else {
+                                //잘 작동하는지 확인해보기 위한 것 //나중에 지우기
+                                System.out.println(j);
                             }
                         }
                     }
-                    //    public String addr1;
-                    //    public String addr2;
-                    //    public long areacode;
-                    //    public String cat1;
-                    //    public String cat2;
-                    //    public String cat3;
-                    //    public long contentid;
-                    //    public long contenttypeid;
-                    //    public long createdtime;
-                    //    public long dist;
-                    //    public String firstimage2;
-                    //    public String title;
-//                    for (int i = 0; i < playObjects.size(); i++) {
-//                        dataParsed += //"addr1 : " + playObjects.get(i).addr1 +
-//                                //"\naddr2 : " + playObjects.get(i).addr2 +
-//                                //"\ncat2 : " + playObjects.get(i).cat2 +
-//                                //"\ncontentid : " + playObjects.get(i).contentid +
-//                                //"\ncontenttypid : " + playObjects.get(i).contenttypeid +
-//                                //"\ndist" + playObjects.get(i).dist +
-//                                //"\nfirstimage2 : " + playObjects.get(i).firstimage2 +
-//                                "title : " + playObjects.get(i).title ;//+ "\n\n";
-//                    }
+
                 }
+
             }
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
@@ -126,8 +115,11 @@ public class RecommendTask extends AsyncTask<Void, Void, ArrayList> {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.println("RECOMMEND NULL");
         }
-        return playObjects;
+        return userPreferencePlayObjects;
     }
 
     @Override

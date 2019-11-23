@@ -24,6 +24,8 @@ public class SearchAirWeatherObject {
     double dailyApparentTemperatureMin;
     double dailyApparentTemperatureMax;
 
+    String weatherType;
+
     public SearchAirWeatherObject() {
     }
 
@@ -43,7 +45,6 @@ public class SearchAirWeatherObject {
         this.dailyHumidity = dailyHumidity;
         this.dailyApparentTemperatureMax = dailyApparentTemperatureMax;
         this.dailyApparentTemperatureMin = dailyApparentTemperatureMin;
-
     }
 
     public String unixTimeToCurrentlytime() {
@@ -67,9 +68,38 @@ public class SearchAirWeatherObject {
     }
 
     public void faherenheitToCelcius() {
-        this.currentlyTemperature = (this.currentlyTemperature - 32) / 1.8;
-        this.dailyApparentTemperatureMax  = (this.dailyApparentTemperatureMax - 32) / 1.8;
-        this.dailyApparentTemperatureMin  = (this.dailyApparentTemperatureMin - 32) / 1.8;
+        if(this.currentlyTemperature > 0) {
+            this.currentlyTemperature = (int)Math.round(((this.currentlyTemperature - 32) / 1.8) + 0.5) ;
+        }
+        else {
+            this.currentlyTemperature = (int)Math.round(((this.currentlyTemperature - 32) / 1.8) - 0.5);
+        }
+
+        if(this.dailyApparentTemperatureMax > 0) {
+            this.dailyApparentTemperatureMax = (int) Math.round(((this.dailyApparentTemperatureMax - 32) / 1.8) + 0.5);
+        }
+        else {
+            this.dailyApparentTemperatureMax = (int) Math.round(((this.dailyApparentTemperatureMax - 32) / 1.8) - 0.5);
+        }
+
+        if(this.dailyApparentTemperatureMin > 0) {
+            this.dailyApparentTemperatureMin = (int) Math.round(((this.dailyApparentTemperatureMin - 32) / 1.8) + 0.5);
+        }
+        else {
+            this.dailyApparentTemperatureMin = (int) Math.round(((this.dailyApparentTemperatureMin - 32) / 1.8) - 0.5);
+        }
+    }
+
+    public void humidity() {
+        this.currentlyHumidity = (int)Math.round(this.currentlyHumidity * 100);
+        this.dailyHumidity = (int)Math.round(this.dailyHumidity * 100);
+    }
+    public String getWeatherType() {
+        return weatherType;
+    }
+
+    public void setWeatherType(String weatherType) {
+        this.weatherType = weatherType;
     }
 
     public String getAirCityName() {
