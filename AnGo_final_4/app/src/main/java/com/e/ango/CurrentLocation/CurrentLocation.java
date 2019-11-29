@@ -48,16 +48,10 @@ public class CurrentLocation {
     private ArrayList<PlayObject> originalPlayObjects; // 전체 파싱 리스트
     private ArrayList<PlayObject> userPreferencePlayObjects; // 유저에게 제공할 추천 리스트
 
-    //추천 놀거리 띄워줄 리스트 뷰
-    private static ListView printList = null;
-
-    private boolean flag_coordinate = false; // 좌표 받아 오면 true
     private int weatherTypeInt;
     private Bitmap bitmap;
 
     boolean flag_userPreferencePlayObjects;///////////////////////////////////////
-    ArrayList<ListData> arrListData;
-    LatLng playLatLng;
     public GoogleMap mMap;
     private Marker playMarker;
 
@@ -157,7 +151,6 @@ public class CurrentLocation {
 
             }
             arrListData.add(listData);
-            ListAdapter listAdapter = new ListAdapter(arrListData);
         }
 
         System.out.println("flag_userPreferenceObjects : " + flag_userPreferencePlayObjects);
@@ -203,11 +196,6 @@ public class CurrentLocation {
         System.out.println("///////////////////////////////////////////////2");
         Log.d(TAG ,"setPlayLocation");
 
-        System.out.println("놀거리 추천 4 1");
-        System.out.println("놀거리 추천 4 2");
-        System.out.println("PlayCoordinates : " + userPreferencePlayObjects.getMapx());
-
-//        LatLng playMarkerLatLng = new LatLng(userPreferencePlayObjects.getMapy(), userPreferencePlayObjects.getMapx());
         LatLng playMarkerLatLng = getPlayLocation(userPreferencePlayObjects);
 
         System.out.println("GETMAPX : " + userPreferencePlayObjects.getMapx());
@@ -234,7 +222,6 @@ public class CurrentLocation {
             switch (weather_type) {
                 case "type_0":
                     weatherInt = R.drawable.medical_mask;
-                    //return R.drawable.medical_mask;
                     break;
                 case "type_1":
                     weatherInt = R.drawable.snowflake;
@@ -243,7 +230,6 @@ public class CurrentLocation {
                 case "type_3":
                 case "type_4":
                     weatherInt = R.drawable.rain;
-                    //return R.drawable.rain;
                     break;
                 case "type_5":
                 case "type_6":
@@ -252,7 +238,6 @@ public class CurrentLocation {
                 case "type_9":
                 case "type_10":
                     weatherInt = R.drawable.cloud;
-                    //return R.drawable.cloud;
                     break;
                 case "type_11":
                 case "type_12":
@@ -262,7 +247,6 @@ public class CurrentLocation {
                 case "type_16":
                     weatherInt = R.drawable.sun;
                     break;
-                //return R.drawable.sun;
             }
             System.out.println("MAIN WEATHERINT : " + weatherInt);
 

@@ -107,7 +107,9 @@ public class SearchAreaActivity extends AppCompatActivity {
         final int hour = calendar.get(Calendar.HOUR_OF_DAY);//시간을 24시간으로
         final int minute = calendar.get(Calendar.MINUTE);
         final Calendar mCalendarMaximum = Calendar.getInstance();//최대로 선택 할 수 있는 날짜를 일주일로 설정
+        final Calendar mCalendarMinimum = Calendar.getInstance();//최소로 선택 할 수 있는 날짜를 오늘로 설정
         mCalendarMaximum.add(Calendar.DAY_OF_MONTH,+7);
+        mCalendarMinimum.add(Calendar.DAY_OF_MONTH,+0);
 
         //spinner 선언 //(지역 설정 드롭박스)
         spinner_District = findViewById(R.id.spinner_districtName);
@@ -116,9 +118,9 @@ public class SearchAreaActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 districtResult = parent.getItemAtPosition(position).toString();//사용자가 지정한 지역의 지역명
-                xCoordinate = districToXcoordinate[position];//사용자가 지정한 지역의 x좌표
-                yCoordinate = districToYcoordinate[position];//사용자가 지정한 지역의 y좌표
-                areaCode = districtToAreaCode[position];
+                xCoordinate = districToXcoordinate[position];//사용자가 지정한 지역의 x좌표 //array.xml 사용
+                yCoordinate = districToYcoordinate[position];//사용자가 지정한 지역의 y좌표 //array.xml 사용
+                areaCode = districtToAreaCode[position];//사용자가 지정한 지역의 areaCode(놀거리 API를 파싱 받을 때 필요) //array.xml 사용
             }
 
             @Override
@@ -134,6 +136,7 @@ public class SearchAreaActivity extends AppCompatActivity {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(
                         SearchAreaActivity.this, setDateListener, year, month, day);
                 datePickerDialog.getDatePicker().setMaxDate(mCalendarMaximum.getTimeInMillis());
+                datePickerDialog.getDatePicker().setMinDate(mCalendarMinimum.getTimeInMillis());
                 datePickerDialog.show();
             }
         });
@@ -208,7 +211,6 @@ public class SearchAreaActivity extends AppCompatActivity {
         };
 
         //텍스트뷰 선언(날씨 파싱 받아오기)
-        //textView_weatherPasredData = findViewById(R.id.textView_weatherParsedData);
         textView_humidity = findViewById(R.id.tv_humidity);
         textView_icon = findViewById(R.id.tv_weather);
         textView_temperature = findViewById(R.id.tv_temperature);
@@ -307,6 +309,7 @@ public class SearchAreaActivity extends AppCompatActivity {
 
                     try {
                         responseDto = new SearchAreaRecommendTask(weatherType).execute().get();
+
                         if(responseDto.getResponse_msg().equals("RecommendCategory_success")) {
                             userPreferencePlayObjects = new SearchAreaPlayTask(responseDto.getPrefer_list(), areaCode).execute().get();
                         }
@@ -314,14 +317,13 @@ public class SearchAreaActivity extends AppCompatActivity {
                             Toast toast = Toast.makeText(SearchAreaActivity.this, "RecommendCategory is Null.", Toast.LENGTH_LONG);
                             toast.show();
                         }
-                        //userPreferencePlayObjects = new RecommendTask(weatherType, originalPlayObjects).execute().get();
 
                         if (userPreferencePlayObjects.isEmpty()) {
-                            System.out.println("flag_userPreferencePlayObjects : 선호도 아이템이 없습니다." + flag_userPreferencePlayObjects);
+                            System.out.println("flag_userPreferencePlayObjects : 선호도 아이템이 없습니다.");
                             Toast toast = Toast.makeText(SearchAreaActivity.this, "선호도 아이템이 없습니다.", Toast.LENGTH_LONG);
                             toast.show();
                         } else {
-                            System.out.println("flag_userPreferencePlayObjects : 선호도 아이템이 있습니다." + flag_userPreferencePlayObjects);
+                            System.out.println("flag_userPreferencePlayObjects : 선호도 아이템이 있습니다.");
                         }
                     } catch (ExecutionException e) {
                         e.printStackTrace();
@@ -386,7 +388,7 @@ public class SearchAreaActivity extends AppCompatActivity {
                                 byte[] byteArray = stream.toByteArray();
                                 intent.putExtra("image", byteArray);
 
-                               // intent.putExtra("image", intentBitmap);
+                                // intent.putExtra("image", intentBitmap);
                                 startActivity(intent);
                             }
                         });
@@ -436,5 +438,4 @@ public class SearchAreaActivity extends AppCompatActivity {
         return weatherInt;
     }
 }
-
 
