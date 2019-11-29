@@ -54,6 +54,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -110,7 +111,7 @@ public class CurrentLocationActivity extends AppCompatActivity
 
 //    Location mPlayLocation;
 
-    String stringAddr;
+    String stringEngAddr;
     String[] playLocation;
 
     ArrayList<PlayObject> originalPlayObjects, userPreferncePlayObjects;
@@ -175,7 +176,7 @@ public class CurrentLocationActivity extends AppCompatActivity
 
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
         //지도의 초기위치를 서울로 이동
-        setDefaultLocation();
+//        setDefaultLocation();
 
 
         //런타임 퍼미션 처리
@@ -252,7 +253,7 @@ public class CurrentLocationActivity extends AppCompatActivity
                         = new LatLng(location.getLatitude(), location.getLongitude());
 
 
-                stringAddr = getCurrentAddress(currentPosition);
+                stringEngAddr = getCurrentAddress(currentPosition);
 //                String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
 //                        + " 경도:" + String.valueOf(location.getLongitude());
 //
@@ -264,8 +265,8 @@ public class CurrentLocationActivity extends AppCompatActivity
 //                setCurrentLocation(location, markerTitle, markerSnippet);
 
                 ////////////////////////////////////////현재 위치 위도 경도
-                currentLatitude = location.getLatitude();
-                currentLongitude = location.getLongitude();
+                currentLatitude = currentPosition.latitude;
+                currentLongitude = currentPosition.longitude;
                 if(currentLongitude != 0 && currentLongitude != 0){
                     flag_coordinates = true;
                 }
@@ -276,81 +277,82 @@ public class CurrentLocationActivity extends AppCompatActivity
                 //playOBject 받을 때 좌표 필
                 System.out.println("locationCallback : " + flag_coordinates);
                 if(flag_coordinates) {
-                    userPreferncePlayObjects = getUserPreferncePlayObjects(currentLatitude, currentLongitude, stringAddr);
+                    userPreferncePlayObjects = getUserPreferncePlayObjects(currentLatitude, currentLongitude, stringEngAddr);
 
                     System.out.println("locationCallback : " + userPreferncePlayObjects.size());
                     if(userPreferncePlayObjects.size() != 0) {
-                        flag_userPreferencePlayObjects = true;
-                        System.out.println("locationCallback flag_userPrefernc: " + flag_userPreferencePlayObjects);
+//                        flag_userPreferencePlayObjects = true;
+//                        System.out.println("locationCallback flag_userPrefernc: " + flag_userPreferencePlayObjects);
+//
+//                        playLocation = new String[userPreferncePlayObjects.size()];
+//
+//                        for (int i = 0; i < userPreferncePlayObjects.size(); i++) {
+//                            //주소 풀네임 얻기
+//                            playLocation[i] = userPreferncePlayObjects.get(i).getAddr1();
+//                            if (userPreferncePlayObjects.get(i).getAddr2() != null) { //두번째 주소가 존재하면
+//                                playLocation[i] += " " + userPreferncePlayObjects.get(i).getAddr2();
+//                                System.out.println("PlayLocation[i] : " + playLocation[i]);
+//                            }
+//
+//                            //놀거리 좌표 구해서 저장
+//                            LatLng playLatLng = new LatLng(getPlayLocation(playLocation[i]).getLatitude(), getPlayLocation(playLocation[i]).getLongitude());
+//                            System.out.println("PLAYLATLNG : " + playLatLng.longitude);
+//                            setPlayLocation(playLatLng.latitude, playLatLng.longitude, userPreferncePlayObjects.get(i));
+//
+//
+//                            int size = userPreferncePlayObjects.size();
+//                            int idx = 0;
+//                            playLocation = new String[size];
+//                            ArrayList<ListData> arrListData = new ArrayList<>();
+//
+//                            for(int j = 0; j < size; j ++){
+//                                ListData listData = new ListData();
+//
+//                                //만약 비었다
+//                                if(userPreferncePlayObjects.get(j).getFirstimage2().isEmpty()){
+//                                    bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.no_image);
+//                                } else {
+//                                    try {
+//                                        bitmap = new LoadImage().execute(userPreferncePlayObjects.get(j).getFirstimage2()).get();
+//                                    } catch (ExecutionException e) {
+//                                        e.printStackTrace();
+//                                    } catch (InterruptedException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                if(userPreferncePlayObjects.size() == 0)
+//                                    listData.setTitle("추천 놀거리가 없습니다 ");
+//                                else {
+//                                    listData.setTitle(userPreferncePlayObjects.get(i).getTitle());
+//                                    listData.setSummary(userPreferncePlayObjects.get(i).getCategoryName());
+//                                    listData.setAddress(userPreferncePlayObjects.get(i).getAddr1());
+//                                    if(userPreferncePlayObjects.get(i).getAddr2() != null)
+//                                        listData.setAddress(listData.getAddress() + userPreferncePlayObjects.get(i).getAddr2());
+//
+//                                    listData.setBitmap(bitmap);
+//
+//                                    flag_userPreferencePlayObjects = true;
+//                                    playLocation[idx] = listData.getAddress();
+//                                }
+//
+//                                arrListData.add(listData);
+//
+//                            }
+//
+//                            //리스트 뷰 등
+//                            printList = (ListView) findViewById(R.id.listView);
+//                            ListAdapter listAdapter = new ListAdapter(arrListData);
+//                                printList.setAdapter(listAdapter);
+//                        }
+//                    }
+//                }
+//                else System.out.println("Flag_Coordinates = null");
 
-                        playLocation = new String[userPreferncePlayObjects.size()];
-
-                        for (int i = 0; i < userPreferncePlayObjects.size(); i++) {
-                            //주소 풀네임 얻기
-                            playLocation[i] = userPreferncePlayObjects.get(i).getAddr1();
-                            if (userPreferncePlayObjects.get(i).getAddr2() != null) { //두번째 주소가 존재하면
-                                playLocation[i] += " " + userPreferncePlayObjects.get(i).getAddr2();
-                                System.out.println("PlayLocation[i] : " + playLocation[i]);
-                            }
-
-                            //놀거리 좌표 구해서 저장
-                            LatLng playLatLng = new LatLng(getPlayLocation(playLocation[i]).getLatitude(), getPlayLocation(playLocation[i]).getLongitude());
-                            System.out.println("PLAYLATLNG : " + playLatLng.longitude);
-                            setPlayLocation(playLatLng.latitude, playLatLng.longitude, userPreferncePlayObjects.get(i));
-
-
-                            int size = userPreferncePlayObjects.size();
-                            int idx = 0;
-                            playLocation = new String[size];
-                            ArrayList<ListData> arrListData = new ArrayList<>();
-
-                            for(int j = 0; j < size; j ++){
-                                ListData listData = new ListData();
-
-                                //만약 비었다
-                                if(userPreferncePlayObjects.get(j).getFirstimage2().isEmpty()){
-                                    bitmap = BitmapFactory.decodeResource(getApplication().getResources(), R.drawable.no_image);
-                                } else {
-                                    try {
-                                        bitmap = new LoadImage().execute(userPreferncePlayObjects.get(j).getFirstimage2()).get();
-                                    } catch (ExecutionException e) {
-                                        e.printStackTrace();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                if(userPreferncePlayObjects.size() == 0)
-                                    listData.setTitle("추천 놀거리가 없습니다 ");
-                                else {
-                                    listData.setTitle(userPreferncePlayObjects.get(i).getTitle());
-                                    listData.setSummary(userPreferncePlayObjects.get(i).getCategoryName());
-                                    listData.setAddress(userPreferncePlayObjects.get(i).getAddr1());
-                                    if(userPreferncePlayObjects.get(i).getAddr2() != null)
-                                        listData.setAddress(listData.getAddress() + userPreferncePlayObjects.get(i).getAddr2());
-
-                                    listData.setBitmap(bitmap);
-
-                                    flag_userPreferencePlayObjects = true;
-                                    playLocation[idx] = listData.getAddress();
-                                }
-
-                                arrListData.add(listData);
-
-                            }
-
-                            //리스트 뷰 등
-                            printList = (ListView) findViewById(R.id.listView);
-                            ListAdapter listAdapter = new ListAdapter(arrListData);
-                                printList.setAdapter(listAdapter);
-                        }
                     }
                 }
-                else System.out.println("Flag_Coordinates = null");
             }
-
         }
-
     };
 
 
@@ -450,15 +452,15 @@ public class CurrentLocationActivity extends AppCompatActivity
 
         } else {
             Address address = addresses.get(0);
-            stringAddr = address.getAddressLine(0); // 영어 전체 주소
+            stringEngAddr = address.getAddressLine(0); // 영어 전체 주소
 //
 //            System.out.println("FLAG_COORDINATES : " + flag_coordinates);
 //            if(flag_coordinates) {
-//                userPreferncePlayObjects = getUserPreferncePlayObjects(currentLatitude, currentLongitude, stringAddr);
+//                userPreferncePlayObjects = getUserPreferncePlayObjects(currentLatitude, currentLongitude, stringEngAddr);
 //                if(userPreferncePlayObjects != null) flag_userPreferencePlayObjects = true;
 //            }
 
-            return stringAddr;
+            return stringEngAddr;
 
         }
 
@@ -487,7 +489,7 @@ public class CurrentLocationActivity extends AppCompatActivity
 
         } else {
             Address playAddress = addresses.get(0);
-//            stringAddr = playAddress.getAddressLine(0); // 영어 전체 주소
+//            stringEngAddr = playAddress.getAddressLine(0); // 영어 전체 주소
             System.out.println("getPlayLocation : " + addresses.get(0).getLatitude() + " ? " + addresses.get(0).getLongitude());
 
             System.out.println("FLAG_COORDINATES : " + flag_coordinates);
@@ -542,18 +544,18 @@ public class CurrentLocationActivity extends AppCompatActivity
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
-
-    public void setDefaultLocation() {
-
-
-        //디폴트 위치, Seoul
-        LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
-        String markerTitle = "위치정보 가져올 수 없음";
-        String markerSnippet = "위치 퍼미션과 GPS 활성 요부 확인하세요";
-
-
-        if (currentMarker != null) currentMarker.remove();
-
+//
+//    public void setDefaultLocation() {
+//
+//
+//        //디폴트 위치, Seoul
+//        LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
+//        String markerTitle = "위치정보 가져올 수 없음";
+//        String markerSnippet = "위치 퍼미션과 GPS 활성 요부 확인하세요";
+//
+//
+//        if (currentMarker != null) currentMarker.remove();
+//
 //        MarkerOptions markerOptions = new MarkerOptions();
 //        markerOptions.position(DEFAULT_LOCATION);
 //        markerOptions.title(markerTitle);
@@ -564,9 +566,9 @@ public class CurrentLocationActivity extends AppCompatActivity
 //
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 15);
 //        mMap.moveCamera(cameraUpdate);
-
-    }
-
+//
+//    }
+//
 
     //여기부터는 런타임 퍼미션 처리을 위한 메소드들
     private boolean checkPermission() {
@@ -707,20 +709,18 @@ public class CurrentLocationActivity extends AppCompatActivity
     }
 
     // 추천 놀거리 목록
-    public ArrayList<PlayObject> getUserPreferncePlayObjects(double currentLatitude, double currentLongitude, String stringAddr) {
+    public ArrayList<PlayObject> getUserPreferncePlayObjects(double currentLatitude, double currentLongitude, String stringEngAddr) {
         try {
-            String stringLatitude = String.valueOf(currentLatitude);
-            String stringLongitude = String.valueOf(currentLongitude);
 
-            System.out.println("USERPREFERNCEPLAYOBJECTS : " + stringLatitude + " ? " + stringLongitude);
-            originalPlayObjects = new PlayTask(stringLatitude, stringLongitude).execute().get();
+            System.out.println("USERPREFERNCEPLAYOBJECTS : " + currentLatitude + " ? " + currentLongitude);
+            originalPlayObjects = new PlayTask(currentLatitude, currentLongitude).execute().get();
 
-            if(originalPlayObjects == null) System.out.println("originalplayobjects null");
-            if(stringAddr == null) System.out.println("stringaddr null");
+            if (originalPlayObjects == null) System.out.println("originalplayobjects null");
+            if (stringEngAddr == null) System.out.println("stringEngaddr null");
 
             //파싱 받은 놀거리가 있으면
-            if(originalPlayObjects != null && stringAddr != null) {
-                weather_type = new AirWeatherTask(stringLatitude, stringLongitude, stringAddr).execute().get();
+            if (originalPlayObjects != null && stringEngAddr != null) {
+                weather_type = new AirWeatherTask(currentLatitude, currentLongitude, stringEngAddr).execute().get();
 
 
                 //날씨 타입이 계산 됐다면
@@ -734,8 +734,7 @@ public class CurrentLocationActivity extends AppCompatActivity
                 //유저 추천 놀거리들
                 userPreferncePlayObjects = new RecommendTask(weather_type, originalPlayObjects).execute().get();
 
-            }
-            else System.out.println("USERPREFERNCEPLAYOBJECTS : " + originalPlayObjects.get(0));
+            } else System.out.println("USERPREFERNCEPLAYOBJECTS : " + originalPlayObjects.get(0));
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -744,10 +743,12 @@ public class CurrentLocationActivity extends AppCompatActivity
 
         return userPreferncePlayObjects;
 
+    }
 
-//        int size = userPreferncePlayObjects.size();
-//        int idx = 0;
-//        playLocation = new String[size];
+    public String[] getPlayLocation(ArrayList<PlayObject> userPreferncePlayObjects)
+        int size = userPreferncePlayObjects.size();
+        int idx = 0;
+        playLocation = new String[size];
 //        ArrayList<ListData> arrListData = new ArrayList<>();
 //
 //        for(int i = 0; i < size; i ++){
@@ -784,7 +785,7 @@ public class CurrentLocationActivity extends AppCompatActivity
 //        ListAdapter listAdapter = new ListAdapter(arrListData);
 //        printList.setAdapter(listAdapter);
 //    }
-    }
+//    }
 
 //    /////////////////////////////////////////놀거리 위치 주소 얻어오기
 ////    public String setPlayLocationForMarker(String[] playLocation) {
@@ -823,13 +824,13 @@ public class CurrentLocationActivity extends AppCompatActivity
 ////                Log.d(TAG, "getCurrentAddress 2");
 ////                /////////////////////////////////////추천 놀거리 받아오기
 ////                Address address = playCoordinates.get(0);
-////                stringAddr = address.getAddressLine(0); // 영어 전체 주소
+////                stringEngAddr = address.getAddressLine(0); // 영어 전체 주소
 ////
 ////                //setPlayLocation(playCoordinates, String playAddress, String categoryName) {
 ////
 ////            }
 ////        }
-////        return stringAddr;
+////        return stringEngAddr;
 ////    }
 
     //날씨 이미지 아이콘 설치

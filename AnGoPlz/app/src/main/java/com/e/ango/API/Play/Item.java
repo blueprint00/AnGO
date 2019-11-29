@@ -14,9 +14,7 @@ public class Item {
 //    private MapxUnion mapx;
 //    private MapxUnion mapy;
     public String mapX;
-    public double mapx;
     public String mapY;
-    public double mapy;
     public String firstimage2;
     public String title;
 }

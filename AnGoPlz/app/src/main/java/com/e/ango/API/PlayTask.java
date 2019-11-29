@@ -19,12 +19,12 @@ import okhttp3.Response;
 public class PlayTask extends AsyncTask<Void, Void, ArrayList<PlayObject>> {
     OkHttpClient client = new OkHttpClient();
 
-    String xCoordinate;
-    String yCoordinate;
+    double xCoordinate;
+    double yCoordinate;
 
     public ArrayList<PlayObject> originalPlayObjects = null;
 
-    public PlayTask(String xCoordinate, String yCoordinate){
+    public PlayTask(double xCoordinate, double yCoordinate){
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
     }

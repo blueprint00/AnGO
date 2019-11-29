@@ -19,8 +19,8 @@ import okhttp3.Request;
 public class AirWeatherTask extends AsyncTask<Void, Void, String> {
     OkHttpClient client = new OkHttpClient();
 
-    String longitude; // 경도 127
-    String latitude; // 위도 36.5
+    double longitude; // 경도 127
+    double latitude; // 위도 36.5
 
     private AirWeatherObject originalAirWeatherObject;
     private String weather_type;
@@ -29,7 +29,7 @@ public class AirWeatherTask extends AsyncTask<Void, Void, String> {
     private String fullCityName;
     private double pm10Value;
 
-    public AirWeatherTask(String latitude, String longitude, String stringAddr) {
+    public AirWeatherTask(double latitude, double longitude, String stringAddr) {
         this.latitude = latitude;
         this.longitude = longitude;
         fullCityName = stringAddr;
