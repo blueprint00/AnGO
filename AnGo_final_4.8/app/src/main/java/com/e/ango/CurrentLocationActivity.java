@@ -10,11 +10,9 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.location.Address;/////////////////////
 import android.location.Location;
 import android.location.LocationManager;
 
@@ -32,8 +30,6 @@ import android.widget.Toast;
 import com.e.ango.API.AirWeatherTask;
 import com.e.ango.API.PlayTask;
 import com.e.ango.API.Play.PlayObject;
-//import com.e.ango.CurrentLocationRecommend.currentLocationRecommendTask;
-import com.e.ango.CurrentLocation.CurrentLocation;
 import com.e.ango.ListView.ListAdapter;
 import com.e.ango.ListView.ListData;
 import com.e.ango.Recommend.RecommendTask;
@@ -55,7 +51,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -255,8 +250,8 @@ public class CurrentLocationActivity extends AppCompatActivity
 
 
                 System.out.println("CURRENT : " + currentLongitude);
-                if(currentLatitude != null && currentLongitude != null)
-                    getPlayLocation(currentLatitude, currentLongitude);
+                if(currentLatitude != null && currentLongitude != null) flag_coordinate = true;
+                if(flag_coordinate) getPlayLocation(currentLatitude, currentLongitude);
                 System.out.println("FLAG_COORDINATES FIRST : " + flag_coordinate);
                 //userPreferencePlayForMarker = new UserPreferencePlayForMarker(currentLatitude, currentLongitude);
             }
@@ -288,7 +283,6 @@ public class CurrentLocationActivity extends AppCompatActivity
 
             Log.d(TAG, "startLocationUpdates : call mFusedLocationClient.requestLocationUpdates");
 
-            ////////////////////////////?????????????
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
 
             if (checkPermission())
@@ -318,6 +312,7 @@ public class CurrentLocationActivity extends AppCompatActivity
 
             }
         }
+        System.out.println("1");
     }
 
 
@@ -328,10 +323,10 @@ public class CurrentLocationActivity extends AppCompatActivity
         super.onStop();
 
         if (mFusedLocationClient != null) {
-
             Log.d(TAG, "onStop : call stopLocationUpdates");
             mFusedLocationClient.removeLocationUpdates(locationCallback);
         }
+
     }
 
 
@@ -365,10 +360,11 @@ public class CurrentLocationActivity extends AppCompatActivity
                     userPreferencePlayObjects = new RecommendTask(weather_type, originalPlayObjects).execute().get();
 
                     //추천 놀거리가 존재하면 마커 띄우기
-                    if (userPreferencePlayObjects != null)
+                    if (userPreferencePlayObjects != null) {
                         for (int i = 0; i < userPreferencePlayObjects.size(); i++) {
                             setPlayMarker(userPreferencePlayObjects.get(i));
                         }
+                    }
                 }
                 //리스트 뷰에 뿌리기
                 printListData(userPreferencePlayObjects);
@@ -464,7 +460,6 @@ public class CurrentLocationActivity extends AppCompatActivity
                 else
                     listData.setAddress(userPreferencePlayObjects.get(i).getAddr1() + " " + userPreferencePlayObjects.get(i).getAddr2());
                 //류저 추천 놀거리가 존재한다
-                flag_userPreferencePlayObjects = true;
             }
             arrListData.add(listData);
         }
@@ -474,7 +469,7 @@ public class CurrentLocationActivity extends AppCompatActivity
         ListAdapter listAdapter = new ListAdapter(arrListData);
         printList.setAdapter(listAdapter);
 
-        System.out.println("flag_userPreferenceObjects : " + flag_userPreferencePlayObjects);
+        System.out.println("flag_userPreferenceObjects : " );
 
     }
 
@@ -506,7 +501,6 @@ public class CurrentLocationActivity extends AppCompatActivity
         System.out.println("PlayCoordinates : " + userPreferencePlayObjects.getMapx());
 
         LatLng playMarkerLatLng = new LatLng(userPreferencePlayObjects.getMapy(), userPreferencePlayObjects.getMapx());
-//        LatLng playMarkerLatLng = getPlayLocation(userPreferencePlayObjects);
 
         System.out.println("GETMAPX : " + userPreferencePlayObjects.getMapx());
         MarkerOptions markerOptions = new MarkerOptions();
@@ -518,10 +512,7 @@ public class CurrentLocationActivity extends AppCompatActivity
         playMarker = mMap.addMarker(markerOptions);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
-
         System.out.println("놀거리 추천 4 3");
-
-
         System.out.println("놀거리 추천 4 4");
         return markerOptions;
     }

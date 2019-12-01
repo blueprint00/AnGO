@@ -22,6 +22,7 @@ public class RegisterActivity  extends AppCompatActivity {
 
     EditText et_id, et_pass, et_name;
     Button btn_check, btn_register;
+    Boolean flag = null;
 
     String toastMessage;
     ResponseDto registerResponse;
@@ -40,6 +41,7 @@ public class RegisterActivity  extends AppCompatActivity {
         btn_check = (Button) findViewById(R.id.btn_check);
         btn_register = (Button) findViewById(R.id.btn_register);
 
+        //회원가입 버튼 비활성화
         btn_register.setEnabled(false);
 
         try {
@@ -62,6 +64,7 @@ public class RegisterActivity  extends AppCompatActivity {
                     //중복 아이디 검사
                     if(registerResponse.getResponse_msg().equals("CheckAccount_success")) {
                         toastMessage = "사용 가능한 아이디 입니다.";
+                        //중복되지 않은 아이디일 경우 회원가입 버튼 활성
                         btn_register.setEnabled(true);
                     }
                     else if (registerResponse.getResponse_msg().equals("CheckAccount_fail"))

@@ -19,7 +19,7 @@ import java.net.URL;
 
 public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
 
-    public static String ip = "172"; //자신의 IP번호
+    public static String ip = "172.30.1.12"; //자신의 IP번호
     public static String serverip = "http://" + ip + ":8090/final_ango/Dispacher2"; // 연결할 jsp주소
     Boolean flag = null; // 선호도 조사 했는지 안했는지
     //null = 로그인 실패
@@ -39,8 +39,6 @@ public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
     @Override
     protected ResponseDto doInBackground(Void... voids) {
         try {
-            System.out.println(ip);
-
             String str;
             URL url = new URL(serverip);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -70,8 +68,6 @@ public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("WHAT THE FUCK");
-        System.out.println(ip);
 //        return flag;
         return loginResponse;
     }

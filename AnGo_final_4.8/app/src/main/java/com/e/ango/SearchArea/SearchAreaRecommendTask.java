@@ -1,10 +1,8 @@
-package com.e.ango.Login;
+package com.e.ango.SearchArea;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.e.ango.Request.RequestDto;
-import com.e.ango.Request.UserDto;
 import com.e.ango.Response.ResponseDto;
 import com.google.gson.Gson;
 
@@ -12,42 +10,44 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
+import static com.e.ango.Login.LoginTask.serverip;
+import static com.e.ango.Login.LoginTask.token;
 
-public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
 
-    public static String ip = "172"; //자신의 IP번호
-    public static String serverip = "http://" + ip + ":8090/final_ango/Dispacher2"; // 연결할 jsp주소
-    Boolean flag = null; // 선호도 조사 했는지 안했는지
-    //null = 로그인 실패
-    //false = 설문조사 안함
+public class SearchAreaRecommendTask extends AsyncTask<Void, Void, ResponseDto> {
 
-    private RequestDto requestDto = new RequestDto();
-    private ResponseDto loginResponse;
-    static public String token;
-    private com.e.ango.Request.UserDto userDto;
 
-    public LoginTask(String userId, String userPass, String request_msg) {
-        userDto = new UserDto(userId, userPass);
-        requestDto.setUser(userDto);
-        requestDto.setRequest_msg(request_msg);
+    String weather_type;
+    ResponseDto responseDto;
+    RequestDto requestDto;
+
+    public SearchAreaRecommendTask(String weather_type) {//String request_msg, String weather_type, String token) {
+        this.weather_type = weather_type;
     }
 
     @Override
     protected ResponseDto doInBackground(Void... voids) {
         try {
-            System.out.println(ip);
-
             String str;
             URL url = new URL(serverip);
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-SearchAreaWeatherType", "application/x-www-form-urlencoded");
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod("POST"); // GET??
+            conn.setDoOutput(true); // 쓰기모드 지정
+            conn.setDoInput(true); // 읽기모드 지정
+            conn.setUseCaches(false); // 캐싱데이터를 받을지 안받을지
+            conn.setDefaultUseCaches(false); // 캐싱데이터 디폴트 값 설정
 
             OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+
+            requestDto = new RequestDto("RecommendCategory", weather_type, token);
 
             Gson gson = new Gson();
             osw.write(gson.toJson(requestDto));
@@ -61,25 +61,24 @@ public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
                     buffer.append(str);
                 }
 
-                loginResponse = gson.fromJson(buffer.toString(), ResponseDto.class);
-                token = loginResponse.getToken();
-            }
+                responseDto = gson.fromJson(buffer.toString(), ResponseDto.class);
 
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            System.out.println("RECOMMEND NULL");
         }
-        System.out.println("WHAT THE FUCK");
-        System.out.println(ip);
-//        return flag;
-        return loginResponse;
+        return responseDto;
     }
 
-    @Override
-    protected void onPostExecute(ResponseDto s) {
-        super.onPostExecute(s);
-    }
-
-    public String getToken(){ return token; }
 }
+
+

@@ -3,6 +3,7 @@ package com.e.ango.Login;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.e.ango.API.Play.Response;
 import com.e.ango.Request.RequestDto;
 import com.e.ango.Request.UserDto;
 import com.e.ango.Response.ResponseDto;
@@ -14,35 +15,44 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 
-public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
+import static com.e.ango.Login.LoginTask.serverip;
+import static com.e.ango.Login.LoginTask.token;
 
-    public static String ip = "172"; //자신의 IP번호
-    public static String serverip = "http://" + ip + ":8090/final_ango/Dispacher2"; // 연결할 jsp주소
-    Boolean flag = null; // 선호도 조사 했는지 안했는지
-    //null = 로그인 실패
-    //false = 설문조사 안함
+public class RegisterTask extends AsyncTask<Void, Void, ResponseDto> {
 
-    private RequestDto requestDto = new RequestDto();
-    private ResponseDto loginResponse;
-    static public String token;
-    private com.e.ango.Request.UserDto userDto;
+    //public static String ip = "172.16.10.37"; //자신의 IP번호
+    //String serverip = "http://" + ip + ":8090/final_ango/Dispacher2\""; // 연결할 jsp주소
+    String response_msg;
+    Boolean flag = true;
 
-    public LoginTask(String userId, String userPass, String request_msg) {
-        userDto = new UserDto(userId, userPass);
+    RequestDto requestDto = new RequestDto();
+    com.e.ango.Request.UserDto userDto;
+    static public ResponseDto registerResponse;
+
+    //Join
+    public RegisterTask(String id, String pass, String name, String request_msg){
+        userDto = new UserDto(id, pass, name);
+        requestDto.setUser(userDto);
+        requestDto.setRequest_msg(request_msg);
+    }
+    //Check
+    public RegisterTask(String id, String request_msg){
+        userDto = new UserDto(id);
         requestDto.setUser(userDto);
         requestDto.setRequest_msg(request_msg);
     }
 
     @Override
     protected ResponseDto doInBackground(Void... voids) {
-        try {
-            System.out.println(ip);
 
+        try {
             String str;
             URL url = new URL(serverip);
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Content-SearchAreaWeatherType", "application/x-www-form-urlencoded");
             conn.setRequestMethod("POST");
@@ -53,7 +63,7 @@ public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
             osw.write(gson.toJson(requestDto));
             osw.flush();
 
-            if (conn.getResponseCode() == conn.HTTP_OK) {
+            if(conn.getResponseCode() == conn.HTTP_OK) {
                 InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF-8");
                 BufferedReader reader = new BufferedReader(tmp);
                 StringBuffer buffer = new StringBuffer();
@@ -61,25 +71,22 @@ public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
                     buffer.append(str);
                 }
 
-                loginResponse = gson.fromJson(buffer.toString(), ResponseDto.class);
-                token = loginResponse.getToken();
+                registerResponse = gson.fromJson(buffer.toString(), ResponseDto.class);
+                token = registerResponse.getToken();
             }
-
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("WHAT THE FUCK");
-        System.out.println(ip);
-//        return flag;
-        return loginResponse;
+
+        return registerResponse;
     }
 
     @Override
-    protected void onPostExecute(ResponseDto s) {
-        super.onPostExecute(s);
+    protected void onPostExecute(ResponseDto flag) {
+        super.onPostExecute(flag);
     }
-
-    public String getToken(){ return token; }
 }
