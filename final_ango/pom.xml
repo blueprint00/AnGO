@@ -1,0 +1,174 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.teamango</groupId>
+	<artifactId>final_ango</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>final_ango Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-dbcp -->
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-dbcp</artifactId>
+			<version>9.0.27</version> 
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-hdfs -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-hdfs</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-mr</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-math-scala -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-math-scala_2.10</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-examples -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-examples</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-spark -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-spark_2.10</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-h2o -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-h2o_2.10</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+
+
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-integration -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-integration</artifactId>
+			<version>0.13.0</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-core -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-core</artifactId>
+			<version>0.9</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-collections -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-collections</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.6</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+
+
+
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.48</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-flink -->
+		<dependency>
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-flink_2.10</artifactId>
+			<version>0.12.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>final_ango</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
