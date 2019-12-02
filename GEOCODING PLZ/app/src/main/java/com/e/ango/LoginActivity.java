@@ -16,11 +16,14 @@ import java.util.concurrent.ExecutionException;
 import com.e.ango.Login.LoginTask;
 
 import com.e.ango.Recommend.RecommendTask;
+import com.e.ango.Response.ResponseDto;
+
 public class LoginActivity extends AppCompatActivity {
 
     Button btn_login, btn_registerMain;
     EditText et_id, et_pass;
     Boolean flag;
+    ResponseDto loginResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,32 +44,50 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
                 }
                 else {
-//                LoginTask loginTask = new LoginTask();
                     LoginTask loginTask = new LoginTask(ID, pass, "LoginAccount");
                     try {
-                        flag = loginTask.execute().get();
+                        loginResponse = loginTask.execute().get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
 
-                    //로그인 실패
-                    if (flag == null) {
-                        Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
-                    }
-
-                    //설문조사 성
-                    else if (flag) {
+                    System.out.println("LoginResponse : " + loginResponse.getResponse_msg());
+                    if(loginResponse.getResponse_msg().equals("LoginAccount_success")){
                         Intent intent = new Intent(LoginActivity.this, SelectActivity.class);
                         startActivity(intent);
+                        finish();
                     }
-                    //설문조사
-                    else {
+
+                    else if(loginResponse.getResponse_msg().equals("LoginAccount_fail")){
+                        Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_SHORT);
+                    }
+
+                    else if(loginResponse.getAvailability() == 0){
                         Intent intent = new Intent(LoginActivity.this, SurveyActivity.class);
                         startActivity(intent);
+                        finish();
                     }
-                    finish();
+//                    //로그인 성공
+//                     if (flag) {
+//                        Intent intent = new Intent(LoginActivity.this, SelectActivity.class);
+//                        startActivity(intent);
+//                        finish();
+//
+//                     }
+//                     //로그인 싫패
+//                     else if (!flag) {
+//                        Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_LONG).show();
+//                    }
+//
+//                    //설문조사
+//                    else if(flag == null){
+//                        Intent intent = new Intent(LoginActivity.this, SurveyActivity.class);
+//                        startActivity(intent);
+//                        finish();
+//
+//                     }
                 }
             }
         });

@@ -3,6 +3,7 @@ package com.e.ango.Login;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.e.ango.API.Play.Response;
 import com.e.ango.Request.RequestDto;
 import com.e.ango.Request.UserDto;
 import com.e.ango.Response.ResponseDto;
@@ -23,11 +24,11 @@ import java.net.URL;
 //	ArrayList<PreferDto> preference_list = new ArrayList<>();
 //	ArrayList<ReviewDto> review_list = new ArrayList<>();
 
-public class LoginTask extends AsyncTask<Void, Void, Boolean> {
+public class LoginTask extends AsyncTask<Void, Void, ResponseDto> {
 
     public static String ip = "172.30.1.20"; //자신의 IP번호
     public static String serverip = "http://" + ip + ":8090/final_ango/Dispacher2"; // 연결할 jsp주소
-    Boolean flag = false; // 선호도 조사 했는지 안했는지
+    Boolean flag = true; // 선호도 조사 했는지 안했는지
     //false = 로그인 실패
     //null = 설문조사 안함
 
@@ -43,7 +44,7 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Void... voids) {
+    protected ResponseDto doInBackground(Void... voids) {
         try {
             String str;
             URL url = new URL(serverip);
@@ -68,11 +69,11 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
                 loginResponse = gson.fromJson(buffer.toString(), ResponseDto.class);
 
                 token = loginResponse.getToken();
-                //로그인 성공 시
-//                if(loginResponse.getResponse_msg().equals("LoginAccount_success")) { flag = true; System.out.println("TRUE : " + flag);}
+                //로그인 실패
+//                if(loginResponse.getResponse_msg().equals("LoginAccount_fail")) { flag = false; System.out.println("FALSE : " + flag);}
 //
 //                //설문조사 안 했으면
-//                if (loginResponse.getAvailability() == 0) { flag = null; System.out.println("NULL : " + flag); }
+//                else if (loginResponse.getAvailability() == 0) { flag = null; System.out.println("NULL : " + flag); }
 //            } else {
 //                Log.i("통신 결과", conn.getResponseCode() + "에러");
             }
@@ -82,11 +83,11 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return flag;
+        return loginResponse;
     }
 
     @Override
-    protected void onPostExecute(Boolean s) {
+    protected void onPostExecute(ResponseDto s) {
         super.onPostExecute(s);
     }
 

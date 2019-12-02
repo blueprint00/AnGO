@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     System.out.println("LoginResponse : " + loginResponse.getResponse_msg());
-                    if(loginResponse.getResponse_msg().equals("LoginAccess_success")){
+                    if(loginResponse.getResponse_msg().equals("LoginAccount_success")){
                         Intent intent = new Intent(LoginActivity.this, SelectActivity.class);
                         startActivity(intent);
                         finish();
