@@ -1,44 +1,49 @@
 package com.e.ango;
 
-import android.os.Bundle
-import android.support.constraint.motion.MotionLayout
-import android.support.v7.app.AppCompatActivity
-import android.view.View
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
-class SelectActivity : AppCompatActivity() {
-private var selectedIndex: Int = 0;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+public class SelectActivity extends AppCompatActivity {
 
-        val layout = intent.getIntExtra("layout_file_id", R.layout.activity_select)
-        setContentView(layout)
-        System.out.println("ACTIVITY : 1")
+    static Button button1, button2;
 
-        val motionLayout = findViewById<MotionLayout>(R.id.motion_container)
-        System.out.println("ACTIVITY : 2")
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select);
 
-        val v1 = findViewById<View>(R.id.v1)
-        val v2 = findViewById<View>(R.id.v2)
+        button1 = (Button) findViewById(R.id.gpsLocationBT);
+        button2 = (Button) findViewById(R.id.selectLocationBT);
 
-        System.out.println("ACTIVITY : 3")
-        v1.setOnClickListener {
-        System.out.println("ACTIVITY : 4")
-        if (selectedIndex == 0) return@setOnClickListener
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SelectActivity.this, CurrentLocationActivity.class);
+                startActivity(intent);
+            }
+        });
 
-            motionLayout.setTransition(R.id.s2, R.id.s1) //orange to blue transition
-                    motionLayout.transitionToEnd()
-                    selectedIndex = 0;
-                    }
-                    v2.setOnClickListener {
-                    System.out.println("ACTIVITY : 5")
-                    if (selectedIndex == 1) return@setOnClickListener
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SelectActivity.this, SearchAreaActivity.class);
+                startActivity(intent);
+            }
+        });
 
-            motionLayout.setTransition(R.id.s1, R.id.s2) //blue to orange transition
+    }
 
-                    motionLayout.transitionToEnd()
-                    selectedIndex = 1;
-                    }
+    public void getUserReview(View v) {
 
-                    }
-                    }
+        Intent intent = new Intent(getApplicationContext(), UserReviewActivity.class);
+        startActivity(intent);
+
+    }
+
+
+}
