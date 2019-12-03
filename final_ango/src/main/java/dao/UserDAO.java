@@ -29,29 +29,28 @@ public class UserDAO {
 	private ResponseDTO response;
 	int sql_flag = 0;
 
-	public ResponseDTO checkUserID(RequestDTO request) {
+	public boolean checkUserID(String user_id) {
+
+		boolean flag = false;
 
 		try {
 
-			response = new ResponseDTO();
 			conn = DBManager.getInstance().getConnection();
-
 			String sql = "select count(*) from user where userId = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, request.getUser().getUser_id());
+			pstmt.setString(1, user_id);
 			rs = pstmt.executeQuery();
 			if (rs.next() && rs.getInt(1) > 0) {
 
-				response.setResponse_msg("CheckAccount_fail");
+				flag = false;
 			} else {
 
-				response.setResponse_msg("CheckAccount_success");
+				flag = true;
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			response.setResponse_msg("CheckAccount_fail");
 
 		} finally {
 
@@ -64,14 +63,15 @@ public class UserDAO {
 
 		}
 
-		return response;
+		return flag;
 	}
 
-	public ResponseDTO createUserAccount(RequestDTO request) {
+	public boolean createUserAccount(RequestDTO request) {
+
+		boolean flag = false;
 
 		try {
 
-			response = new ResponseDTO();
 			conn = DBManager.getInstance().getConnection();
 
 			String sql = "INSERT INTO user(userId, userPw, userNm, availability) VALUES(?,?,?,?)";
@@ -84,16 +84,15 @@ public class UserDAO {
 			sql_flag = pstmt.executeUpdate();
 			if (sql_flag > 0) {
 
-				response.setResponse_msg("JoinAccount_success");
-				response.setToken(Token.createToken(request.getUser().getUser_id()));
+				flag = true;
+
 			} else {
 
-				response.setResponse_msg("JoinAccount_fail");
+				flag = false;
 			}
 
 		} catch (Exception e) {
 
-			response.setResponse_msg("JoinAccount_fail");
 			e.printStackTrace();
 
 		} finally {
@@ -107,34 +106,33 @@ public class UserDAO {
 
 		}
 
-		return response;
+		return flag;
 	}
 
-	public ResponseDTO LoginAccount(RequestDTO requset) {
+	public boolean LoginAccount(RequestDTO requset) {
+
+		boolean flag = false;
 
 		try {
-			response = new ResponseDTO();
+
 			conn = DBManager.getInstance().getConnection();
 
-			String sql = "select count(*), userId, availability from user where userId =? and userPw = ?";
+			String sql = "select count(*) from user where userId =? and userPw = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, requset.getUser().getUser_id());
 			pstmt.setString(2, requset.getUser().getUser_pw());
 			rs = pstmt.executeQuery();
 			if (rs.next() && rs.getInt(1) > 0) {
 
-				response.setResponse_msg("LoginAccount_success");
-				response.setToken(Token.createToken(requset.getUser().getUser_id()));
-				response.setAvailability(rs.getInt("availability"));
+				flag = true;
 
 			} else {
 
-				response.setResponse_msg("LoginAccount_fail");
+				flag = false;
 			}
 
 		} catch (Exception e) {
 
-			response.setResponse_msg("LoginAccount_fail");
 			e.printStackTrace();
 		} finally {
 
@@ -146,7 +144,40 @@ public class UserDAO {
 			}
 
 		}
-		return response;
+		return flag;
+	}
+
+	public int getUserAvailability(String user_id) {
+
+		int userAvailability = 0;
+
+		try {
+
+			conn = DBManager.getInstance().getConnection();
+
+			String sql = "select availability from user where userId =?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, user_id);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+
+				userAvailability = rs.getInt("availability");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		} finally {
+
+			try {
+				DBManager.getInstance().close(conn, pstmt, pstmt, rs);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		return userAvailability;
 	}
 
 	public Long getUserIndex(String user_id, Connection con) {
@@ -155,7 +186,8 @@ public class UserDAO {
 
 		try {
 
-			this.conn = con;
+			// this.conn = con;
+			conn = DBManager.getInstance().getConnection();
 			String sql = "select count(*), user_idx from user where userId= ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, user_id);
@@ -172,20 +204,92 @@ public class UserDAO {
 		return user_idx;
 	}
 
+	public Long getUserIndex2(String user_id) {
+
+		Long user_idx = null;
+
+		try {
+			conn = DBManager.getInstance().getConnection();
+			String sql = "select count(*), user_idx from user where userId= ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, user_id);
+			rs = pstmt.executeQuery();
+			if (rs.next() && rs.getInt(1) > 0) {
+
+				user_idx = rs.getLong("user_idx");
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return user_idx;
+	}
+
+	public ArrayList<Long> getPreferCategoryIndexList2(ArrayList<PreferDTO> prefer_list) {
+
+		ArrayList<Long> cg_idx_list = new ArrayList<Long>();
+
+		try {
+
+			conn = DBManager.getInstance().getConnection();
+			String sql = "select count(*),cg_idx from activity_cg where cg_id= ?";
+			pstmt = conn.prepareStatement(sql);
+			for (int i = 0; i < prefer_list.size(); i++) {
+
+				pstmt.setString(1, prefer_list.get(i).getCg_id());
+				rs = pstmt.executeQuery();
+				if (rs.next() && rs.getInt(1) > 0) {
+
+					cg_idx_list.add(rs.getLong("cg_idx"));
+				}
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return cg_idx_list;
+	}
+
 	public ArrayList<Long> getPreferCategoryIndexList(ArrayList<PreferDTO> prefer_list, Connection con) {
 
 		ArrayList<Long> cg_idx_list = new ArrayList<Long>();
 
 		try {
 
-			// this.conn = DBManager.getInstance().getConnection();
-
-			this.conn = con;
+			conn = DBManager.getInstance().getConnection();
 			String sql = "select count(*),cg_idx from activity_cg where cg_id= ?";
 			pstmt = conn.prepareStatement(sql);
 			for (int i = 0; i < prefer_list.size(); i++) {
 
 				pstmt.setString(1, prefer_list.get(i).getCg_id());
+				rs = pstmt.executeQuery();
+				if (rs.next() && rs.getInt(1) > 0) {
+
+					cg_idx_list.add(rs.getLong("cg_idx"));
+				}
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return cg_idx_list;
+	}
+
+	public ArrayList<Long> getReviewCategoryIndexList2(ArrayList<ReviewDTO> review_list) {
+
+		ArrayList<Long> cg_idx_list = new ArrayList<Long>();
+
+		try {
+
+			conn = DBManager.getInstance().getConnection();
+			String sql = "select count(*),cg_idx from activity_cg where cg_id= ?";
+			pstmt = conn.prepareStatement(sql);
+			for (int i = 0; i < review_list.size(); i++) {
+
+				pstmt.setString(1, review_list.get(i).getCategory_id());
 				rs = pstmt.executeQuery();
 				if (rs.next() && rs.getInt(1) > 0) {
 
@@ -206,7 +310,8 @@ public class UserDAO {
 
 		try {
 
-			this.conn = con;
+			// this.conn = con;
+			conn = DBManager.getInstance().getConnection();
 			String sql = "select count(*),cg_idx from activity_cg where cg_id= ?";
 			pstmt = conn.prepareStatement(sql);
 			for (int i = 0; i < review_list.size(); i++) {
@@ -226,57 +331,52 @@ public class UserDAO {
 		return cg_idx_list;
 	}
 
-	public ResponseDTO insertUserPreferenceList(RequestDTO request) throws SQLException {
+	public boolean insertUserPreferenceList(Long user_idx, ArrayList<Long> cg_idx_list,
+			ArrayList<PreferDTO> prefer_list) throws SQLException {
 
-		Long user_idx = null;
-		ArrayList<Long> cg_idx_list = new ArrayList<Long>();
+		boolean flag = false;
 		int cnt = 0;
 
 		try {
 
-			response = new ResponseDTO();
-
 			conn = DBManager.getInstance().getConnection();
 			conn.setAutoCommit(false);
 
-			user_idx = getUserIndex(request.getUser().getUser_id(), conn);
-			cg_idx_list = getPreferCategoryIndexList(request.getPreference_list(), conn);
+			for (int i = 0; i < prefer_list.size(); i++) {
 
-			for (int i = 0; i < request.getPreference_list().size(); i++) {
-
-				String sql = "insert into " + request.getPreference_list().get(i).getQuuestion_type() + " value(?,?,?)";
+				String sql = "insert into " + prefer_list.get(i).getQuuestion_type() + " value(?,?,?)";
 
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setLong(1, user_idx);
 				pstmt.setLong(2, cg_idx_list.get(i));
-				pstmt.setFloat(3, request.getPreference_list().get(i).getUser_score());
+				pstmt.setFloat(3, prefer_list.get(i).getUser_score());
 				sql_flag = pstmt.executeUpdate();
 
 				if (sql_flag > 0) {
 					cnt++;
 					System.out.println(cnt + ": insert user score : " + user_idx + " " + cg_idx_list.get(i) + " "
-							+ request.getPreference_list().get(i).getUser_score() + " success");
+							+ prefer_list.get(i).getUser_score() + " success");
 				}
 			}
 
 			sql_flag = 0;
-			String sql2 = "update user set availability = 1 where userId = ?";
+			String sql2 = "update user set availability = 1 where user_idx = ?";
 			pstmt = conn.prepareStatement(sql2);
-			pstmt.setString(1, request.getUser().getUser_id());
+			pstmt.setLong(1, user_idx);
 			sql_flag = pstmt.executeUpdate();
 
-			if (sql_flag > 0 && cnt == request.getPreference_list().size()) {
+			if (sql_flag > 0 && cnt == prefer_list.size()) {
 
 				System.out.println("update availability success");
 				conn.commit();
 				conn.setAutoCommit(true);
-				response.setResponse_msg("InsertUserPreference_success");
+				flag = true;
 
 			} else {
 
 				System.out.println("rollback");
 				conn.rollback();
-				response.setResponse_msg("InsertUserPreference_fail");
+				flag = false;
 
 			}
 
@@ -287,7 +387,7 @@ public class UserDAO {
 				e.printStackTrace();
 				System.out.println("rollback");
 				conn.rollback();
-				response.setResponse_msg("InsertUserPreference_fail");
+				flag = false;
 
 			}
 
@@ -301,10 +401,10 @@ public class UserDAO {
 			}
 
 		}
-		return response;
+		return flag;
 	}
 
-	public ArrayList<PreferDTO> getRandomCategory(Connection con) {
+	public ArrayList<PreferDTO> getRandomCategory() {
 
 		ArrayList<String> cg_id_list = new ArrayList<String>();
 		ArrayList<String> cg_nm_list = new ArrayList<String>();
@@ -313,7 +413,7 @@ public class UserDAO {
 
 		try {
 
-			this.conn = con;
+			conn = DBManager.getInstance().getConnection();
 			String sql = "select cg_id, cg_name from activity_cg";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -352,54 +452,36 @@ public class UserDAO {
 
 	}
 
-	public ResponseDTO getUserRecommendCategory(RequestDTO request) {
+	public ArrayList<PreferDTO> getUserRecommendCategory(List<RecommendedItem> recommend_list) {
 
 		ArrayList<PreferDTO> prefer_list = new ArrayList<PreferDTO>();
-		List<RecommendedItem> recommend_list = null;
 
 		try {
 
-			response = new ResponseDTO();
+			// response = new ResponseDTO();
 			conn = DBManager.getInstance().getConnection();
 
-			recommend_list = UserBaseRecommendation.getRecommendCategory(
-					getUserIndex(request.getUser().getUser_id(), conn), request.getWeather_type());
+			String sql = "select cg_id, cg_name from activity_cg where cg_idx =?";
+			pstmt = conn.prepareStatement(sql);
 
-			if (recommend_list == null) {
-				System.out.println("recommend is null");
-				response.setPrefer_list(getRandomCategory(conn));
+			for (RecommendedItem recommendation : recommend_list) {
 
-			} else if (recommend_list.size() == 0) {
-
-				System.out.println("recommend size is 0");
-				response.setPrefer_list(getRandomCategory(conn));
-			}
-
-			else {
-
-				String sql = "select cg_id, cg_name from activity_cg where cg_idx =?";
-				pstmt = conn.prepareStatement(sql);
-
-				for (RecommendedItem recommendation : recommend_list) {
-
-					pstmt.setLong(1, recommendation.getItemID());
-					rs = pstmt.executeQuery();
-					rs.next();
+				pstmt.setLong(1, recommendation.getItemID());
+				rs = pstmt.executeQuery();
+				if (rs.next()) {
 					PreferDTO prefer = new PreferDTO();
 					prefer.setCg_id(rs.getString("cg_id"));
 					prefer.setCategory_nm(rs.getString("cg_name"));
 					prefer_list.add(prefer);
+				} else {
 
+					System.out.println("get user recommend category x");
 				}
-				response.setPrefer_list(prefer_list);
 
 			}
 
-			response.setResponse_msg("RecommendCategory_success");
-
 		} catch (Exception e) {
 
-			response.setResponse_msg("RecommendCategory_fail");
 			e.printStackTrace();
 		} finally {
 
@@ -411,47 +493,17 @@ public class UserDAO {
 			}
 		}
 
-		return response;
+		return prefer_list;
 
 	}
 
-	public ResponseDTO getQuestionAndCategory(RequestDTO request) {
-
-		try {
-
-			conn = DBManager.getInstance().getConnection();
-			response = new ResponseDTO();
-			response.setPrefer_list(getPreferVO_list(conn));
-			response.setQuestion_list(getQuestionVO_list(conn));
-			response.setResponse_msg("GetQuestionAndCategory_success");
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			response.setResponse_msg("GetQuestionAndCategory_fail");
-
-		} finally {
-
-			try {
-				DBManager.getInstance().close(conn, pstmt, pstmt, rs);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-
-		return response;
-	}
-
-	public ArrayList<PreferDTO> getPreferVO_list(Connection con) {
+	public ArrayList<PreferDTO> getCategoryList() {
 
 		ArrayList<PreferDTO> prefer_list = new ArrayList<PreferDTO>();
 
 		try {
 
-//			conn = DBManager.getInstance().getConnection();
-			this.conn = con;
+			conn = DBManager.getInstance().getConnection();
 			String sql = "select cg_id,cg_name from activity_cg ";
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -473,14 +525,13 @@ public class UserDAO {
 
 	}
 
-	public ArrayList<QuestionDTO> getQuestionVO_list(Connection con) {
+	public ArrayList<QuestionDTO> getQuestionList() {
 
 		ArrayList<QuestionDTO> question_list = new ArrayList<QuestionDTO>();
 
 		try {
 
-//			conn = DBManager.getInstance().getConnection();
-			this.conn = con;
+			conn = DBManager.getInstance().getConnection();
 			String sql = "select weather_type,text from question";
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -558,6 +609,8 @@ public class UserDAO {
 		return review_cnt;
 	}
 
+	
+
 	public ResponseDTO insertUserReview(RequestDTO request) throws SQLException {
 
 		boolean userScoreExist = false;
@@ -575,7 +628,8 @@ public class UserDAO {
 
 			user_idx = getUserIndex(request.getUser().getUser_id(), conn);
 			cg_idx_list = getReviewCategoryIndexList(request.getReview_list(), conn);
-			userScoreExist = checkIfUserScoreExist(user_idx, cg_idx_list.get(0), request.getWeather_type(), conn);
+			userScoreExist = checkIfUserScoreExist(user_idx, cg_idx_list.get(0),
+					request.getReview_list().get(0).getReview_type(), conn);
 			review_cnt = getUserReviewCnt(request, conn);
 
 			System.out.println("user_idx :" + user_idx);
@@ -586,7 +640,7 @@ public class UserDAO {
 
 				if (review_cnt == 0) {
 
-					String update_sql_1 = "update " + request.getWeather_type()
+					String update_sql_1 = "update " + request.getReview_list().get(0).getReview_type()
 							+ " set score = ? where user_idx = ? and cg_idx = ?";
 					pstmt = conn.prepareStatement(update_sql_1);
 					System.out.println("score : " + request.getReview_list().get(0).getReview_score());
@@ -597,7 +651,7 @@ public class UserDAO {
 
 				} else {
 
-					String update_sql = "update " + request.getWeather_type()
+					String update_sql = "update " + request.getReview_list().get(0).getReview_type()
 							+ " set score = ( (score * ?) + ? ) / ? where user_idx = ? and cg_idx = ?";
 					pstmt = conn.prepareStatement(update_sql);
 					pstmt.setInt(1, review_cnt);
@@ -610,7 +664,7 @@ public class UserDAO {
 
 			} else {
 
-				String insert_sql = "insert into " + request.getWeather_type() + " value(?,?,?)";
+				String insert_sql = "insert into " + request.getReview_list().get(0).getReview_type() + " value(?,?,?)";
 				pstmt = conn.prepareStatement(insert_sql);
 				pstmt.setLong(1, user_idx);
 				pstmt.setLong(2, cg_idx_list.get(0));
@@ -637,7 +691,7 @@ public class UserDAO {
 			java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(LocalDateTime.now());
 			pstmt.setTimestamp(5, timestamp);
 			pstmt.setString(6, request.getReview_list().get(0).getCategory_id());
-			pstmt.setString(7, request.getWeather_type());
+			pstmt.setString(7, request.getReview_list().get(0).getReview_type());
 			pstmt.setString(8, request.getReview_list().get(0).getTitle());
 
 			sql_flag = 0;
@@ -803,18 +857,17 @@ public class UserDAO {
 
 	}
 
-	public ResponseDTO getUserReview(RequestDTO request) {
+	public ArrayList<ReviewDTO> getUserReview(String user_id) {
 
 		ArrayList<ReviewDTO> review_list = new ArrayList<ReviewDTO>();
 
 		try {
 
-			response = new ResponseDTO();
 			conn = DBManager.getInstance().getConnection();
 
 			String sql = "select * from review where user_id = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, request.getUser().getUser_id());
+			pstmt.setString(1, user_id);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -834,18 +887,6 @@ public class UserDAO {
 
 			}
 
-			if (review_list.size() == 0) {
-
-				response.setResponse_msg("GetUserReview_fail");
-
-			} else {
-
-				response.setUser(request.getUser());
-				response.setReview_list(review_list);
-				response.setResponse_msg("GetUserReview_success");
-
-			}
-
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -859,22 +900,21 @@ public class UserDAO {
 			}
 
 		}
-		return response;
+		return review_list;
 
 	}
 
-	public ResponseDTO getContentReview(RequestDTO request) {
+	public ArrayList<ReviewDTO> getContentReview(String content_id) {
 
 		ArrayList<ReviewDTO> review_list = new ArrayList<ReviewDTO>();
 
 		try {
 
-			response = new ResponseDTO();
 			conn = DBManager.getInstance().getConnection();
 
 			String sql = "select user_id, review_text, score, time from review where content_id = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, request.getReview_list().get(0).getContent_id());
+			pstmt.setString(1, content_id);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -889,16 +929,6 @@ public class UserDAO {
 
 			}
 
-			if (review_list.size() == 0) {
-
-				response.setResponse_msg("GetContentReview_fail");
-
-			} else {
-				response.setReview_list(review_list);
-				response.setResponse_msg("GetContentReview_success");
-
-			}
-
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -912,7 +942,7 @@ public class UserDAO {
 			}
 
 		}
-		return response;
+		return review_list;
 
 	}
 

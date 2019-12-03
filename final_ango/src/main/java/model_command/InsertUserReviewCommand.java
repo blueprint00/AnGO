@@ -28,7 +28,7 @@ public class InsertUserReviewCommand extends Command {
 				UserDTO user = new UserDTO(Token.getUserID(client_request.getToken()));
 				client_request.setUser(user);
 				server_response = userDAO.insertUserReview(client_request);
-
+				server_response.setToken_msg("token_not_expired");
 			} else {
 
 				server_response.setToken_msg("token_expired");

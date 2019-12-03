@@ -7,7 +7,7 @@ import dto.ResponseDTO;
 public class CheckAccountCommand extends Command {
 
 	private UserDAO userDAO;
-	private ResponseDTO server_response;
+	private ResponseDTO server_response = new ResponseDTO();
 
 	public CheckAccountCommand(UserDAO userDAO) {
 
@@ -17,18 +17,31 @@ public class CheckAccountCommand extends Command {
 
 	@Override
 	public ResponseDTO doCommand(RequestDTO client_request) {
+
 		// TODO Auto-generated method stub
 
-		try {
+		boolean flag;
 
-			server_response = userDAO.checkUserID(client_request);
+		try {
+//
+
+			flag = userDAO.checkUserID(client_request.getUser().getUser_id());
+			if (flag) {
+				server_response.setResponse_msg("CheckAccount_success");
+
+			} else {
+
+				server_response.setResponse_msg("CheckAccount_fail");
+
+			}
+//			server_response = userDAO.checkUserID(client_request);
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
 			server_response.setResponse_msg("CheckAccount_fail");
 		}
-		
+
 		return server_response;
 	}
 

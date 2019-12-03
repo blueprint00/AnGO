@@ -6,10 +6,10 @@ import dto.ResponseDTO;
 import dto.UserDTO;
 import model_utility.Token;
 
-public class GetUserReviewCommand extends Command{
-	
+public class GetUserReviewCommand extends Command {
+
 	private UserDAO userDAO;
-	private ResponseDTO server_response;
+	private ResponseDTO server_response = new ResponseDTO();
 
 	public GetUserReviewCommand(UserDAO userDAO) {
 
@@ -20,15 +20,21 @@ public class GetUserReviewCommand extends Command{
 	@Override
 	public ResponseDTO doCommand(RequestDTO client_request) {
 		// TODO Auto-generated method stub
-
 		try {
 
 			if (Token.checkExpToken(client_request.getToken())) {
 
 				UserDTO user = new UserDTO(Token.getUserID(client_request.getToken()));
-				client_request.setUser(user);
-				server_response = userDAO.getUserReview(client_request);
+				server_response.setUser(user);
+				server_response.setToken_msg("token_not_expired");
+				server_response.setReview_list(userDAO.getUserReview(Token.getUserID(client_request.getToken())));
+				if (server_response.getReview_list().size() == 0) {
 
+					server_response.setResponse_msg("GetUserReview_fail");
+				} else {
+
+					server_response.setResponse_msg("GetUserReview_success");
+				}
 			} else {
 
 				server_response.setToken_msg("token_expired");
@@ -36,7 +42,7 @@ public class GetUserReviewCommand extends Command{
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			server_response.setResponse_msg("GetContentReview_fail");
+			server_response.setResponse_msg("GetUserReview_fail");
 		}
 
 		return server_response;
